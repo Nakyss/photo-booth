@@ -11,6 +11,6 @@ appServer.setSocketManager(socketManager);
 socketManager.initialize();
 
 
-const port = 3000;
+const port = 59875;
 appServer.start(port);
 
