@@ -37,7 +37,7 @@ void WebSocketClient::onTextMessageReceived(const QString &message)
 
     if (event == "photo:broadcast") {
         QJsonObject data = obj.value("data").toObject();
-        QString image = "http://localhost:3000" + data.value("image").toString();
+        QString image = "https://photo.nakyss.fr" + data.value("image").toString();
         QString messageText = data.value("message").toString();
 
         qDebug() << "Une image a été envoyée!";

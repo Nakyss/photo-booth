@@ -17,7 +17,7 @@ PhotoBooth::PhotoBooth(QWidget *parent)
     this->resize(250,250);
     button = new QPushButton("Ouvrir overlay",this);
 
-    client = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:3000")), this);
+    client = new WebSocketClient(QUrl(QStringLiteral("wss://photo.nakyss.fr")), this);
 
     // connexion pour recevoir l'URL et démarrer le téléchargement
     connect(client, &WebSocketClient::imageReceived,
