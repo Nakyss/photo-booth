@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Photo-booth</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<div class="video-container">
+    <video id="cameraStream" autoplay playsinline></video>
+    <canvas id="photoCanvas" class="hidden"></canvas>
+</div>
+
+<button id="photoButton" class="floating-button" aria-label="Photo mode">
+    <img src="/icons/photo-icon.png" alt="Photo icon">
+</button>
+</body>
+
+
+<script>
+    const video = document.getElementById('cameraStream');
+    const canvas = document.getElementById('photoCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const startCamera = async () =>{
+        try {
+            video.srcObject = await navigator.mediaDevices.getUserMedia({video: true});
+        } catch (err) {
+            console.error("Erreur d'accès à la caméra:", err);
+            alert("Impossible d'accéder à la caméra.");
+        }
+    }
+
+    const capturePhoto = () => {
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(video, 0, 0, width, height);
+
+        video.classList.add('hidden');
+        canvas.classList.remove('hidden');
+    }
+
+
+    // Convertit le canvas en Blob et envoie en multipart/form-data à /upload
+    const uploadCapturedPhoto = () => {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+                if (!blob) return reject(new Error('Impossible de créer le blob'));
+                const form = new FormData();
+                form.append('image', blob, `photo-${Date.now()}.png`);
+                form.append('message', '');
+
+                try {
+                    const res = await fetch('/upload', {
+                        method: 'POST',
+                        body: form
+                    });
+                    if (!res.ok) {
+                        const err = await res.text();
+                        return reject(new Error(err || 'Erreur lors de l\'upload'));
+                    }
+                    const json = await res.json();
+                    resolve(json);
+                } catch (e) {
+                    reject(e);
+                }
+            }, 'image/png');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', startCamera);
+
+    // WebSocket — se connecter au même hôte, chemin /ws (adapter côté serveur si besoin)
+    (function initWebSocket() {
+        const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+        // changez '/ws' si votre serveur WebSocket écoute un autre chemin
+        const wsUrl = `${protocol}://${location.host}/ws`;
+        let ws;
+
+        function connect() {
+            ws = new WebSocket(wsUrl);
+
+            ws.addEventListener('open', () => {
+                console.log('WebSocket connecté:', wsUrl);
+            });
+
+            ws.addEventListener('message', (evt) => {
+                try {
+                    const msg = JSON.parse(evt.data);
+                    // protocole simple : { event: 'photo:broadcast', data: { image, message } }
+                    if (msg.event === 'photo:broadcast' && msg.data) {
+                        console.log("Une Image a été envoyée");
+                        console.log(msg.data.image, msg.data.message);
+                        // TODO: afficher l'image si nécessaire
+                    } else {
+                        console.debug('Message WS inconnu:', msg);
+                    }
+                } catch (e) {
+                    console.warn('Impossible de parser le message WS:', e, evt.data);
+                }
+            });
+
+            ws.addEventListener('close', (e) => {
+                console.warn('WebSocket fermé, tentative reconnexion dans 2s', e);
+                setTimeout(connect, 2000);
+            });
+
+            ws.addEventListener('error', (err) => {
+                console.error('Erreur WebSocket:', err);
+                ws.close();
+            });
+        }
+
+        connect();
+        // exposer si besoin
+        window.__appWebSocket = () => ws;
+    })();
+
+    document.getElementById('photoButton').addEventListener('click', async () => {
+        capturePhoto();
+
+        try {
+            const result = await uploadCapturedPhoto();
+            console.log('Upload réussi:', result);
+            // Remettre la caméra et cacher le canvas
+            canvas.classList.add('hidden');
+            video.classList.remove('hidden');
+        } catch (err) {
+            console.error('Upload échoué:', err);
+            alert('Échec de l\'upload.');
+            // remettre la caméra pour retenter
+            canvas.classList.add('hidden');
+            video.classList.remove('hidden');
+        }
+    });
+</script>
+</html>
