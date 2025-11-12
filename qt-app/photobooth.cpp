@@ -12,10 +12,6 @@ PhotoBooth::PhotoBooth(QWidget *parent)
     , timer(new QTimer(this))
     ,client(nullptr)
 {
-    //ui->setupUi(this);
-
-    this->resize(250,250);
-    button = new QPushButton("Ouvrir overlay",this);
 
     client = new WebSocketClient(QUrl(QStringLiteral("wss://photo.nakyss.fr")), this);
 
@@ -23,7 +19,6 @@ PhotoBooth::PhotoBooth(QWidget *parent)
     connect(client, &WebSocketClient::imageReceived,
             this, &PhotoBooth::loadOverlay, Qt::QueuedConnection);
 
-    //connect(button, SIGNAL(clicked()), this, SLOT(loadOverlay()));
     connect(this->timer, SIGNAL(timeout()), this, SLOT(hideOverlay()));
 }
 

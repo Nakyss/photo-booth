@@ -5,6 +5,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     PhotoBooth w;
-    w.show();
+    //w.show();
+    a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

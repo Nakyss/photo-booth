@@ -51,4 +51,5 @@ void WebSocketClient::onTextMessageReceived(const QString &message)
 void WebSocketClient::onDisconnected()
 {
     qWarning() << "Déconnecté du serveur WebSocket.";
+    m_webSocket.open(m_url);
 }
