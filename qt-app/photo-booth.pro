@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     overlay.cpp \
     photobooth.cpp \
+    traymanager.cpp \
     websocketclient.cpp
 
 HEADERS += \
@@ -24,12 +25,14 @@ HEADERS += \
     photobooth.h \
     overlay.h \
     photobooth.h \
+    traymanager.h \
     websocketclient.h
 
-FORMS += \
-    photobooth.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    data.qrc

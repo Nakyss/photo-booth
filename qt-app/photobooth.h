@@ -6,6 +6,7 @@
 #include "overlay.h"
 #include "filedownloader.h"
 #include "websocketclient.h"
+#include "traymanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,6 +30,7 @@ private:
     QPixmap *image;
     FileDownloader *m_pImgCtrl;
     WebSocketClient *client;
+    TrayManager *trayManager;
 
 
 private slots:

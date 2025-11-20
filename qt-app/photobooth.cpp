@@ -1,19 +1,20 @@
 #include "photobooth.h"
-#include "ui_photobooth.h"
 #include <QTimer>
 #include <iostream>
 #include "QUrl"
 
-
 PhotoBooth::PhotoBooth(QWidget *parent)
     : QMainWindow(parent)
     , overlay(nullptr)
-    , image(nullptr)
     , timer(new QTimer(this))
-    ,client(nullptr)
+    , image(nullptr)
+    , client(nullptr)
+    , trayManager(nullptr)
 {
 
     client = new WebSocketClient(QUrl(QStringLiteral("wss://photo.nakyss.fr")), this);
+
+    trayManager = new TrayManager(this, this);
 
     // connexion pour recevoir l'URL et démarrer le téléchargement
     connect(client, &WebSocketClient::imageReceived,
