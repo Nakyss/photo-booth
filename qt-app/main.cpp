@@ -7,7 +7,6 @@ int main(int argc, char *argv[])
 
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         qWarning() << "No system tray available, exiting.";
-        // tu peux choisir de continuer quand même, mais l'icône ne sera pas affichée
     }
 
     PhotoBooth w;
