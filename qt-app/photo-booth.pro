@@ -30,6 +30,7 @@ HEADERS += \
     traymanager.h \
     websocketclient.h
 
+RC_ICONS = data/icons/logo.ico
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
