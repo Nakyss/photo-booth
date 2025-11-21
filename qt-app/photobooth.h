@@ -6,6 +6,7 @@
 #include "traymanager.h"
 #include <QQueue>
 #include "session.h"
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,6 +30,7 @@ private:
     QQueue<QUrl> m_pendingQueue;           // file d'attente
     int m_maxConcurrent = 3;               // configurable
     int m_displayMs = 2500;                // configurable durée d'affichage
+    QLabel *infoText;
 
 
 private slots:

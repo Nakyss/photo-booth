@@ -7,6 +7,10 @@ PhotoBooth::PhotoBooth(QWidget *parent)
     , client(nullptr)
     , trayManager(nullptr)
 {
+    this->resize(500,500);
+
+    infoText = new QLabel("Il n'y a rien a voir ici, tu peut fermer la fenetre ça reste en arrière plan", this);
+    infoText->adjustSize();
 
     client = new WebSocketClient(QUrl(QStringLiteral("wss://photo.nakyss.fr")), this);
 
