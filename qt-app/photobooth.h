@@ -2,11 +2,10 @@
 #define PHOTOBOOTH_H
 
 #include <QMainWindow>
-#include <QPushButton>
-#include "overlay.h"
-#include "filedownloader.h"
 #include "websocketclient.h"
 #include "traymanager.h"
+#include <QQueue>
+#include "session.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,21 +23,19 @@ public:
 
 private:
     Ui::PhotoBooth *ui;
-    Overlay *overlay;        // Widget pour l'overlay
-    QTimer *timer;           // Timer pour cacher l'overlay
-    QPushButton *button;
-    QPixmap *image;
-    FileDownloader *m_pImgCtrl;
     WebSocketClient *client;
     TrayManager *trayManager;
+    QVector<Session*> m_sessions;      // sessions actives
+    QQueue<QUrl> m_pendingQueue;           // file d'attente
+    int m_maxConcurrent = 3;               // configurable
+    int m_displayMs = 2500;                // configurable durée d'affichage
 
 
 private slots:
-    void displayOverlay();
-    void hideOverlay();      // Méthode pour cacher l'overlay
-
-public slots:
-    void loadOverlay(const QString &url);
+    void handleImageUrl(const QString &url);
+    void onSessionFinished(Session* session);
+    void tryStartNext();
+    Session* createSessionForUrl(const QUrl &url);
 
 };
 #endif // PHOTOBOOTH_H

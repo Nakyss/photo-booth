@@ -1,13 +1,9 @@
 #include "photobooth.h"
 #include <QTimer>
-#include <iostream>
-#include "QUrl"
+#include <QUrl>
 
 PhotoBooth::PhotoBooth(QWidget *parent)
     : QMainWindow(parent)
-    , overlay(nullptr)
-    , timer(new QTimer(this))
-    , image(nullptr)
     , client(nullptr)
     , trayManager(nullptr)
 {
@@ -18,9 +14,7 @@ PhotoBooth::PhotoBooth(QWidget *parent)
 
     // connexion pour recevoir l'URL et démarrer le téléchargement
     connect(client, &WebSocketClient::imageReceived,
-            this, &PhotoBooth::loadOverlay, Qt::QueuedConnection);
-
-    connect(this->timer, SIGNAL(timeout()), this, SLOT(hideOverlay()));
+            this, &PhotoBooth::handleImageUrl, Qt::QueuedConnection);
 }
 
 PhotoBooth::~PhotoBooth()
@@ -29,44 +23,47 @@ PhotoBooth::~PhotoBooth()
 }
 
 
-void PhotoBooth::loadOverlay(const QString &overlay)
+void PhotoBooth::handleImageUrl(const QString &urlStr)
 {
-    if (overlay.isEmpty()) {
-        qWarning() << "loadOverlay: url vide";
+    QUrl url(urlStr);
+    if (!url.isValid()) {
+        qWarning() << "PhotoBooth::handleImageUrl url invalide:" << urlStr;
         return;
     }
 
-    QUrl imageUrl(overlay);
-    std::cout<< "Debut du téléchargement" << std::endl;
-
-    m_pImgCtrl = new FileDownloader(imageUrl, this);
-
-    connect(m_pImgCtrl, SIGNAL(downloaded()), SLOT(displayOverlay()));
-}
-
-void PhotoBooth::displayOverlay()
-{
-    std::cout << "Ouvrir" <<std::endl;
-
-    image = new QPixmap();
-    image->loadFromData(m_pImgCtrl->downloadedData());
-
-    overlay = new Overlay(nullptr,image);
-    timer->start(2500);
-}
-
-void PhotoBooth::hideOverlay()
-{
-    std::cout << "Fermer" <<std::endl;
-    delete overlay;
-    overlay = nullptr;
-    if (image != nullptr) {
-        delete image;
-        image = nullptr;
+    // si on peut créer une session maintenant, on le fait, sinon on met en queue
+    if (m_sessions.size() < m_maxConcurrent) {
+        Session *s = createSessionForUrl(url);
+        m_sessions.append(s);
+        s->start();
+    } else {
+        m_pendingQueue.enqueue(url);
     }
-    delete m_pImgCtrl;
-    m_pImgCtrl = nullptr;
-    timer->stop();
 }
 
+Session* PhotoBooth::createSessionForUrl(const QUrl &url)
+{
+    Session *s = new Session(url, m_displayMs, this);
+    connect(s, &Session::finished, this, &PhotoBooth::onSessionFinished, Qt::QueuedConnection);
+    return s;
+}
+
+void PhotoBooth::onSessionFinished(Session* session)
+{
+    // retire de la liste des sessions actives
+    m_sessions.removeAll(session);
+
+    // démarrer la prochaine de la file si présente
+    tryStartNext();
+}
+
+void PhotoBooth::tryStartNext()
+{
+    while (!m_pendingQueue.isEmpty() && m_sessions.size() < m_maxConcurrent) {
+        QUrl next = m_pendingQueue.dequeue();
+        Session *s = createSessionForUrl(next);
+        m_sessions.append(s);
+        s->start();
+    }
+}
 

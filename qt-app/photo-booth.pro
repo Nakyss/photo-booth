@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     overlay.cpp \
     photobooth.cpp \
+    session.cpp \
     traymanager.cpp \
     websocketclient.cpp
 
@@ -25,6 +26,7 @@ HEADERS += \
     photobooth.h \
     overlay.h \
     photobooth.h \
+    session.h \
     traymanager.h \
     websocketclient.h
 

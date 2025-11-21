@@ -4,6 +4,8 @@
 #include <QApplication>
 #include <QWidget>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QUrl>
 
 TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     : QObject(parent),
@@ -27,10 +29,12 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     // Menu contextuel
     trayMenu = new QMenu();
 
-    QAction *showHideAction = new QAction(tr("Afficher / Cacher"), this);
+    //QAction *showHideAction = new QAction(tr("Afficher / Cacher"), this);
+    QAction *sendImagesAction = new QAction(tr("Envoyer des images"), this);
     QAction *quitAction     = new QAction(tr("Quitter"), this);
 
-    trayMenu->addAction(showHideAction);
+    //trayMenu->addAction(showHideAction);
+    trayMenu->addAction(sendImagesAction);
     trayMenu->addSeparator();
     trayMenu->addAction(quitAction);
 
@@ -38,7 +42,16 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
 
     // Connexions
     connect(trayIcon, &QSystemTrayIcon::activated, this, &TrayManager::onActivated);
-    connect(showHideAction, &QAction::triggered, this, &TrayManager::onShowHide);
+    //connect(showHideAction, &QAction::triggered, this, &TrayManager::onShowHide);
+
+    // Ouvre la page https://photo.nakyss.fr dans le navigateur par défaut
+    connect(sendImagesAction, &QAction::triggered, this, [this]() {
+        QUrl url(QStringLiteral("https://photo.nakyss.fr"));
+        if (!QDesktopServices::openUrl(url)) {
+            qWarning() << "TrayManager: failed to open URL" << url;
+        }
+    });
+
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
     trayIcon->show();
