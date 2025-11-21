@@ -70,11 +70,67 @@
         validationsButtons.classList.remove('hidden');
     }
 
-
     // Convertit le canvas en Blob et envoie en multipart/form-data à /upload
     const uploadCapturedPhoto = () => {
         return new Promise((resolve, reject) => {
-            canvas.toBlob(async (blob) => {
+            // Créer un canvas temporaire haute résolution
+            const highResCanvas = document.createElement('canvas');
+            const highResCtx = highResCanvas.getContext('2d');
+            
+            // Multiplier la résolution (2x, 3x, ou 4x selon les besoins)
+            const scale = 2;
+            highResCanvas.width = canvas.width * scale;
+            highResCanvas.height = canvas.height * scale;
+            
+            // Améliorer la qualité du rendu
+            highResCtx.imageSmoothingEnabled = true;
+            highResCtx.imageSmoothingQuality = 'high';
+            
+            // Redessiner l'image originale en haute résolution
+            if (originalImageData) {
+                // Créer un canvas temporaire pour l'image originale
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.putImageData(originalImageData, 0, 0);
+                
+                // Dessiner en haute résolution
+                highResCtx.drawImage(tempCanvas, 0, 0, highResCanvas.width, highResCanvas.height);
+            }
+            
+            // Redessiner le texte en haute résolution
+            const text = captionInput.value.trim();
+            if (text) {
+                const width = highResCanvas.width;
+                const height = highResCanvas.height;
+                const fontSize = Math.floor(height / 12);
+                
+                highResCtx.font = `bold ${fontSize}px Arial, sans-serif`;
+                highResCtx.textAlign = 'center';
+                highResCtx.textBaseline = 'bottom';
+                
+                const metrics = highResCtx.measureText(text);
+                const textWidth = metrics.width;
+                const padding = 20 * scale;
+                
+                const x = width / 2;
+                const y = height - padding;
+                
+                // Contour du texte
+                highResCtx.strokeStyle = 'black';
+                highResCtx.lineWidth = 2 * scale;
+                highResCtx.lineJoin = 'round';
+                highResCtx.miterLimit = 2;
+                highResCtx.strokeText(text, x, y);
+                
+                // Texte blanc
+                highResCtx.fillStyle = 'white';
+                highResCtx.fillText(text, x, y);
+            }
+            
+            // Convertir le canvas haute résolution en blob
+            highResCanvas.toBlob(async (blob) => {
                 if (!blob) return reject(new Error('Impossible de créer le blob'));
                 const form = new FormData();
                 form.append('image', blob, `photo-${Date.now()}.png`);
