@@ -12,6 +12,12 @@ body {
     flex-direction: column;
 }
 
+.title, .subtitle {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+} 
+
 /* --- Floating Button (bottom-right) --- */
 .floating-button {
     width: 60px;
@@ -51,7 +57,7 @@ body {
     position: relative;
     width: 100%;
     max-width: 420px;
-    margin: 200px auto 10px auto;
+    margin: 150px auto 10px auto;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
@@ -65,16 +71,6 @@ body {
     border-radius: 12px;
 }
 
-.video-container {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    background: #000;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
 .video-container video,
 .video-container canvas {
     width: 100%;
@@ -84,4 +80,20 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+.validation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.floating-button#valid{
+    background-color: green;
+    margin: 0;
+}
+
+.floating-button#delete{
+    background-color: red;
+    margin: 0;
 }

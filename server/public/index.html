@@ -4,22 +4,37 @@
     <meta charset="UTF-8">
     <title>Photo-booth</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="shortcut icon" href="icons/icon.png" type="image/x-icon">
 </head>
 <body>
-<div class="video-container">
-    <video id="cameraStream" autoplay playsinline></video>
-    <canvas id="photoCanvas" class="hidden"></canvas>
-</div>
+    <h1 class="title">Photo-booth</h1>
+    <p class="subtitle">Loin d'etre terminée</p>
 
-<button id="photoButton" class="floating-button" aria-label="Photo mode">
-    <img src="/icons/photo-icon.png" alt="Photo icon">
-</button>
+    <div class="video-container">
+        <video id="cameraStream" autoplay playsinline></video>
+        <canvas id="photoCanvas" class="hidden"></canvas>
+    </div>
+    
+    <button id="photoButton" class="floating-button" aria-label="Photo mode">
+        <img src="/icons/photo-icon.png" alt="Photo icon">
+    </button>
+
+    <div class="validation-buttons hidden">
+        <button id="valid" class="floating-button">
+            <img src="icons/check-icon.png" alt="Photo icon">
+        </button>
+        <button id="delete" class="floating-button">
+            <img src="icons/cross-icon.png" alt="Photo icon">
+        </button>
+    </div>
 </body>
 
 
 <script>
     const video = document.getElementById('cameraStream');
     const canvas = document.getElementById('photoCanvas');
+    const photoButton = document.getElementById('photoButton');
+    const validationsButtons = document.querySelector('.validation-buttons');
     const ctx = canvas.getContext('2d');
 
     const startCamera = async () =>{
@@ -41,6 +56,8 @@
 
         video.classList.add('hidden');
         canvas.classList.remove('hidden');
+        photoButton.classList.add('hidden');
+        validationsButtons.classList.remove('hidden');
     }
 
 
@@ -73,22 +90,36 @@
 
     document.addEventListener('DOMContentLoaded', startCamera);
 
-    document.getElementById('photoButton').addEventListener('click', async () => {
+    photoButton.addEventListener('click', async () => {
         capturePhoto();
+    });
 
+    document.getElementById('valid').addEventListener('click', async () => {
         try {
             const result = await uploadCapturedPhoto();
             console.log('Upload réussi:', result);
             // Remettre la caméra et cacher le canvas
             canvas.classList.add('hidden');
             video.classList.remove('hidden');
+            validationsButtons.classList.add('hidden');
+            photoButton.classList.remove('hidden');
         } catch (err) {
             console.error('Upload échoué:', err);
             alert('Échec de l\'upload.');
             // remettre la caméra pour retenter
             canvas.classList.add('hidden');
             video.classList.remove('hidden');
+            validationsButtons.classList.add('hidden');
+            photoButton.classList.remove('hidden');
         }
     });
+
+    document.getElementById('delete').addEventListener('click', () => {
+        canvas.classList.add('hidden');
+        video.classList.remove('hidden');
+        validationsButtons.classList.add('hidden');
+        photoButton.classList.remove('hidden');
+    });
+
 </script>
 </html>
