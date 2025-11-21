@@ -14,6 +14,7 @@
         <video id="cameraStream" autoplay playsinline></video>
         <canvas id="photoCanvas" class="hidden"></canvas>
     </div>
+    <input type="text" id="caption" placeholder="Entrez une légende" maxlength="40">
     
     <button id="photoButton" class="floating-button" aria-label="Photo mode">
         <img src="/icons/photo-icon.png" alt="Photo icon">
@@ -35,7 +36,10 @@
     const canvas = document.getElementById('photoCanvas');
     const photoButton = document.getElementById('photoButton');
     const validationsButtons = document.querySelector('.validation-buttons');
+    const captionInput = document.getElementById('caption');
+    //const captionPreview = document.getElementById('captionpreview');
     const ctx = canvas.getContext('2d');
+    let originalImageData = null; // Stocker l'image sans texte
 
     const startCamera = async () =>{
         try {
@@ -53,6 +57,12 @@
         canvas.width = width;
         canvas.height = height;
         ctx.drawImage(video, 0, 0, width, height);
+        
+        // Sauvegarder l'image originale
+        originalImageData = ctx.getImageData(0, 0, width, height);
+
+        // Ajouter le texte
+        drawCaptionOnCanvas();
 
         video.classList.add('hidden');
         canvas.classList.remove('hidden');
@@ -114,11 +124,52 @@
         }
     });
 
+    // Fonction pour dessiner le caption sur le canvas
+    const drawCaptionOnCanvas = () => {
+        const text = captionInput.value.trim();
+        if (!text) return;
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Configuration du style du texte
+        const fontSize = Math.floor(height / 12); // Taille proportionnelle à l'image
+        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        // Mesurer le texte
+        const metrics = ctx.measureText(text);
+        const textWidth = metrics.width;
+        const padding = 20;
+
+        // Position du texte (en bas de l'image)
+        const x = width / 2;
+        const y = height - padding;
+
+        // Dessiner le texte en blanc
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.strokeText(text, x, y);
+        ctx.fillText(text, x, y);
+    }
+
+
     document.getElementById('delete').addEventListener('click', () => {
         canvas.classList.add('hidden');
         video.classList.remove('hidden');
         validationsButtons.classList.add('hidden');
         photoButton.classList.remove('hidden');
+    });
+
+        captionInput.addEventListener('input', () => {
+        //captionPreview.textContent = captionInput.value;
+        // Redessiner l'image avec le nouveau texte
+        if (!canvas.classList.contains('hidden') && originalImageData) {
+            ctx.putImageData(originalImageData, 0, 0);
+            drawCaptionOnCanvas();
+        }
     });
 
 </script>

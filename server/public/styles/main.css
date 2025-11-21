@@ -97,3 +97,11 @@ body {
     background-color: red;
     margin: 0;
 }
+
+#caption {
+    width: 420px;
+    margin: 10px auto;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
