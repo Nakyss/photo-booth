@@ -21,3 +21,5 @@ Faire tourné la commande sur une version pas plus recente que Ubuntu 22.04 (gli
 ```bash
 bash -x ./linux-deploy-script.sh 2>&1 | tee debug.log
 ```
+
+https://www.swisstransfer.com/d/c0fdc590-c099-4546-9fb7-fa5f85b631ac
