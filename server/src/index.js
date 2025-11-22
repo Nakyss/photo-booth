@@ -2,8 +2,8 @@ import AppServer from './server/AppServer.js';
 import SocketManager from './server/SocketManager.js';
 import UserManager from './server/UserManager.js';
 
-const appServer = new AppServer();
 const userManager = new UserManager();
+const appServer = new AppServer(userManager);
 const socketManager = new SocketManager(appServer.server, userManager);
 
 appServer.setSocketManager(socketManager);

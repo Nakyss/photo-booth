@@ -11,10 +11,11 @@ const __dirname = dirname(__filename);
 
 
 export default class AppServer {
-    constructor() {
+    constructor(userManager) {
         this.app = express();
         this.server = http.createServer(this.app);
         this.socketManager = null;
+        this.userManager = userManager;
 
         // TTL en ms (1 minute)
         this.uploadTtlMs = 60 * 1000;
@@ -73,6 +74,11 @@ export default class AppServer {
             }
 
             return res.json({ path: publicPath });
+        });
+
+        this.app.get('/users', (req, res) => {
+            const users = this.userManager.getUserCount();
+            res.json(users);
         });
     }
 

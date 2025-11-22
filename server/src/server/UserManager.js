@@ -21,4 +21,8 @@ export default class UserManager {
     getAllUsers() {
         return Array.from(this.connectedUsers.values());
     }
+
+    getUserCount() {
+        return this.connectedUsers.size;
+    }
 }
