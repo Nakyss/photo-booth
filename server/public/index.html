@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo-booth</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="shortcut icon" href="icons/icon.png" type="image/x-icon">
@@ -9,6 +10,22 @@
 <body>
     <h1 class="title">Photo-booth</h1>
     <a class="subtitle" href="Photo-booth-Release-0.1.zip">Télécharger le client (Windows)</a>
+
+    <div class="infos"> 
+         <div class="checkbox-container">    
+            <input type="checkbox" class="checkbox" id="checkbox">
+            <label for="checkbox" class="checkbox-label">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun"></i>
+                <span class="ball"></span>
+            </label>
+        </div>
+
+        <div class="user-count">
+            <p>Clients connectés : <span id="userCount" style="color: red;">0</span></p>
+            <button id="reload"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+        </div>       
+    </div>
 
     <div class="video-container">
         <video id="cameraStream" autoplay playsinline></video>
@@ -28,22 +45,6 @@
             <img src="icons/cross-icon.png" alt="Photo icon">
         </button>
     </div>
-
-    <div class="user-count">
-        <p>Clients connectés : <span id="userCount" style="color: red;">0</span></p>
-        <button id="reload"><i class="fa-solid fa-arrow-rotate-right"></i></button>
-    </div>
-
-
-    <div class="checkbox-container">    
-        <input type="checkbox" class="checkbox" id="checkbox">
-        <label for="checkbox" class="checkbox-label">
-            <i class="fas fa-moon"></i>
-            <i class="fas fa-sun"></i>
-            <span class="ball"></span>
-        </label>
-    </div>
-
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </body>

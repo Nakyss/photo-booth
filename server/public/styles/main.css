@@ -83,6 +83,7 @@ body.dark {
     color: var(--title-color);
 } 
 
+
 /* --- Floating Button (bottom-right) --- */
 .floating-button {
     width: 60px;
@@ -121,12 +122,32 @@ body.dark {
 .video-container {
     position: relative;
     width: 100%;
-    max-width: 420px;
+    max-width: 500px;
     margin: 150px auto 10px auto;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#caption {
+    width: 500px;
+    margin: 10px auto;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--light-grey);
+    background-color: var(--bg-color);
+    color: var(--title-color);
+}
+
+@media (max-width: 660px) {
+    .video-container {
+        max-width: 300px;
+        margin: 75px auto 10px auto;
+    }
+    #caption {
+        width: 300px;
+    }
 }
 
 .video-container video {
@@ -161,16 +182,6 @@ body.dark {
 .floating-button#delete{
     background-color: red;
     margin: 0;
-}
-
-#caption {
-    width: 420px;
-    margin: 10px auto;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid var(--light-grey);
-    background-color: var(--bg-color);
-    color: var(--title-color);
 }
 
 .user-count {
@@ -217,4 +228,20 @@ body.dark {
     position: absolute;
     top: 20px;
     left: 30px;
+}
+
+@media (max-width: 660px) {
+    .infos {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+    }
+    .checkbox-container {
+        position: initial;
+        margin-left: 25px;
+    }
+    .user-count {
+        position: initial;
+        margin-right: 25px;
+    }
 }
