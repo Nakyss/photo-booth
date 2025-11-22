@@ -8,7 +8,16 @@ Fait apparaitre des images sur l'écran des personnes avec l'application install
 
 
 
-- deploy
+- deploy WINDOWS
 ```bash
 C:\Qt\6.10.0\mingw_64\bin\windeployqt.exe --release E:\Code\photo-booth\qt-app\build\Desktop_Qt_6_10_0_MinGW_64_bit-Release\release\photo-booth.exe --dir E:\Code\photo-booth\deploy
+```
+
+- deploy linux
+
+Faire tourné la commande sur une version pas plus recente que Ubuntu 22.04 (glibc ≤ 2.35).
+
+> permet d'avoir tout le debug du deploy
+```bash
+bash -x ./linux-deploy-script.sh 2>&1 | tee debug.log
 ```
