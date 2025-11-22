@@ -1,7 +1,7 @@
 #include "websocketclient.h"
 #include <QDebug>
 
-#define BASE_URL "http://localhost:59875"
+#define BASE_URL "https://photo.nakyss.fr"
 
 WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
     : QObject(parent), m_url(url), m_reconnectAttempts(0), m_maxReconnectAttempts(10)

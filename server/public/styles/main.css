@@ -190,11 +190,10 @@ body.dark {
     cursor: pointer;
     padding: 0;
     margin-top: 5px;
-    width: 34px;
-    height: 34px;
     padding: 5px;
     border-radius: 5px;
     color: var(--title-color);
+    font-size: 1.2rem;
 }
 
 #reload:hover {
@@ -204,6 +203,14 @@ body.dark {
 #reload:hover i {
     transform: rotate(60deg);
     transition: transform 0.3s ease;
+}
+
+@keyframes spin {
+    from { transform: rotate(60deg); }
+    to { transform: rotate(360deg); }
+}
+#reload i.rotate {
+    animation: spin 0.5s ease-in-out;
 }
 
 .checkbox-container {
