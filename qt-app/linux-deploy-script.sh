@@ -14,9 +14,9 @@ log "=== Lancement du script $(date) ==="
 set -x
 
 APPNAME="Photo-booth"
-BUNDLE_DIR="$(pwd)/${APPNAME}.AppDir"
+BUNDLE_DIR="$(pwd)/${APPNAME}-x86_64.AppDir"
 EXE_SRC="$(pwd)/build/Desktop_Qt_6_10_0-Release/photo-booth"
-ICON_SRC="$(pwd)/data/icons/logo.png"
+ICON_SRC="$(pwd)/data/icons/Photo-booth.png"
 LINUXDEPLOYQT="$(pwd)/linuxdeployqt.AppImage"
 
 # Vérifications rapides
@@ -39,8 +39,7 @@ stat -c '%A %s %n' "$BUNDLE_DIR/usr/bin/$APPNAME" >>"$LOGFILE"
 
 log "Copie icône (si existe)"
 if [ -f "$ICON_SRC" ]; then
-  cp "$ICON_SRC" "$BUNDLE_DIR/usr/share/icons/hicolor/256x256/apps/${APPNAME}.png" 2>>"$LOGFILE" || \
-    cp "$ICON_SRC" "$BUNDLE_DIR/usr/share/icons/hicolor/128x128/apps/${APPNAME}.png" 2>>"$LOGFILE"
+  cp "$ICON_SRC" "$BUNDLE_DIR/${APPNAME}.png" 2>>"$LOGFILE"
   log "Icône copiée"
 else
   log "Aucune icône trouvée à $ICON_SRC — pas bloquant"
