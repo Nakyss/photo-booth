@@ -1,0 +1,274 @@
+const video = document.getElementById('cameraStream');
+const canvas = document.getElementById('photoCanvas');
+const photoButton = document.getElementById('photoButton');
+const validationsButtons = document.querySelector('.validation-buttons');
+const captionInput = document.getElementById('caption');
+const ctx = canvas.getContext('2d');
+const cameraOption = document.getElementById('cameraOption')
+let originalImageData = null; // Stocker l'image sans texte
+
+const constraints = {
+    video: true
+};
+
+const startCamera = async (constraints) =>{
+    try {
+        video.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (err) {
+        console.error("Erreur d'accès à la caméra:", err);
+        alert("Impossible d'accéder à la caméra.");
+    }
+}
+
+const capturePhoto = () => {
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(video, 0, 0, width, height);
+    
+    // Sauvegarder l'image originale
+    originalImageData = ctx.getImageData(0, 0, width, height);
+    
+    // Ajouter le texte
+    drawCaptionOnCanvas();
+    
+    video.classList.add('hidden');
+    canvas.classList.remove('hidden');
+    photoButton.classList.add('hidden');
+    validationsButtons.classList.remove('hidden');
+}
+
+// Convertit le canvas en Blob et envoie en multipart/form-data à /upload
+const uploadCapturedPhoto = () => {
+    return new Promise((resolve, reject) => {
+        // Créer un canvas temporaire haute résolution
+        const highResCanvas = document.createElement('canvas');
+        const highResCtx = highResCanvas.getContext('2d');
+        
+        // Multiplier la résolution (2x, 3x, ou 4x selon les besoins)
+        const scale = 2;
+        highResCanvas.width = canvas.width * scale;
+        highResCanvas.height = canvas.height * scale;
+        
+        // Améliorer la qualité du rendu
+        highResCtx.imageSmoothingEnabled = true;
+        highResCtx.imageSmoothingQuality = 'high';
+        
+        // Redessiner l'image originale en haute résolution
+        if (originalImageData) {
+            // Créer un canvas temporaire pour l'image originale
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.putImageData(originalImageData, 0, 0);
+            
+            // Dessiner en haute résolution
+            highResCtx.drawImage(tempCanvas, 0, 0, highResCanvas.width, highResCanvas.height);
+        }
+        
+        // Redessiner le texte en haute résolution
+        const text = captionInput.value.trim();
+        if (text) {
+            const width = highResCanvas.width;
+            const height = highResCanvas.height;
+            const fontSize = Math.floor(height / 12);
+            
+            highResCtx.font = `bold ${fontSize}px Arial, sans-serif`;
+            highResCtx.textAlign = 'center';
+            highResCtx.textBaseline = 'bottom';
+            
+            const metrics = highResCtx.measureText(text);
+            const textWidth = metrics.width;
+            const padding = 20 * scale;
+            
+            const x = width / 2;
+            const y = height - padding;
+            
+            // Contour du texte
+            highResCtx.strokeStyle = 'black';
+            highResCtx.lineWidth = 2 * scale;
+            highResCtx.lineJoin = 'round';
+            highResCtx.miterLimit = 2;
+            highResCtx.strokeText(text, x, y);
+            
+            // Texte blanc
+            highResCtx.fillStyle = 'white';
+            highResCtx.fillText(text, x, y);
+        }
+        
+        // Convertir le canvas haute résolution en blob
+        highResCanvas.toBlob(async (blob) => {
+            if (!blob) return reject(new Error('Impossible de créer le blob'));
+            const form = new FormData();
+            form.append('image', blob, `photo-${Date.now()}.png`);
+            form.append('message', '');
+            
+            try {
+                const res = await fetch('/upload', {
+                    method: 'POST',
+                    body: form
+                });
+                if (!res.ok) {
+                    const err = await res.text();
+                    return reject(new Error(err || 'Erreur lors de l\'upload'));
+                }
+                const json = await res.json();
+                resolve(json);
+            } catch (e) {
+                reject(e);
+            }
+        }, 'image/png');
+    });
+}
+
+photoButton.addEventListener('click', async () => {
+    capturePhoto();
+});
+
+document.getElementById('valid').addEventListener('click', async () => {
+    try {
+        const result = await uploadCapturedPhoto();
+        console.log('Upload réussi:', result);
+        // Remettre la caméra et cacher le canvas
+        canvas.classList.add('hidden');
+        video.classList.remove('hidden');
+        validationsButtons.classList.add('hidden');
+        photoButton.classList.remove('hidden');
+    } catch (err) {
+        console.error('Upload échoué:', err);
+        alert('Échec de l\'upload.');
+        // remettre la caméra pour retenter
+        canvas.classList.add('hidden');
+        video.classList.remove('hidden');
+        validationsButtons.classList.add('hidden');
+        photoButton.classList.remove('hidden');
+    }
+});
+
+// Fonction pour dessiner le caption sur le canvas
+const drawCaptionOnCanvas = () => {
+    const text = captionInput.value.trim();
+    if (!text) return;
+    
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Configuration du style du texte
+    const fontSize = Math.floor(height / 12); // Taille proportionnelle à l'image
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    
+    // Mesurer le texte
+    const metrics = ctx.measureText(text);
+    const textWidth = metrics.width;
+    const padding = 20;
+    
+    // Position du texte (en bas de l'image)
+    const x = width / 2;
+    const y = height - padding;
+    
+    // Dessiner le texte en blanc
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.strokeText(text, x, y);
+    ctx.fillText(text, x, y);
+}
+
+
+document.getElementById('delete').addEventListener('click', () => {
+    canvas.classList.add('hidden');
+    video.classList.remove('hidden');
+    validationsButtons.classList.add('hidden');
+    photoButton.classList.remove('hidden');
+});
+
+captionInput.addEventListener('input', () => {
+    //captionPreview.textContent = captionInput.value;
+    // Redessiner l'image avec le nouveau texte
+    if (!canvas.classList.contains('hidden') && originalImageData) {
+        ctx.putImageData(originalImageData, 0, 0);
+        drawCaptionOnCanvas();
+    }
+});
+
+const updateUserCount = async () => {
+    try {
+        const res = await fetch('/users');
+        if (!res.ok) throw new Error('Erreur lors de la récupération du nombre d\'utilisateurs');
+        const userCount = await res.json();
+        const el = document.getElementById('userCount')
+        el.textContent = userCount;
+        if (userCount > 0) {
+            el.style.color = 'green';
+        } else {
+            el.style.color = 'red';
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+    document.getElementById("checkbox").checked = true;
+}
+
+const checkbox = document.getElementById("checkbox")
+checkbox.addEventListener("change", () => {
+    if (checkbox.checked) {
+        localStorage.setItem("theme", "dark");
+        document.body.classList.add("dark");
+    } else {
+        localStorage.setItem("theme", "light");
+        document.body.classList.remove("dark");
+    }
+})
+
+
+const getCameraSelection = async () => {
+    await navigator.mediaDevices.getUserMedia({video: true});
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+    const options = videoDevices.map(videoDevice => {
+        return `<option value="${videoDevice.deviceId}">${videoDevice.label}</option>`;
+    });
+    cameraOption.innerHTML = options.join('');
+    if (videoDevices.length > 0) {
+        const updateConstraints = {
+            ...constraints,
+            deviceId: {
+                exact: videoDevices[0].deviceId
+            }
+        };
+        startCamera(updateConstraints);
+    }
+};
+
+
+document.getElementById('reload').addEventListener('click', () => {
+    updateUserCount();
+    document.querySelector('#reload i').classList.add('rotate');
+    setTimeout(() => {
+        document.querySelector('#reload i').classList.remove('rotate');
+    }, 1000);
+});
+document.addEventListener('DOMContentLoaded', () => {
+    updateUserCount();
+    getCameraSelection();
+});
+
+
+cameraOption.onchange = () => {
+  const updateConstraints = {
+    ...constraints,
+    deviceId: {
+      exact: cameraOption.value
+    }
+  };
+  startCamera(updateConstraints);
+};

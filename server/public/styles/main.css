@@ -123,7 +123,7 @@ body.dark {
     position: relative;
     width: 100%;
     max-width: 500px;
-    margin: 150px auto 10px auto;
+    margin: 10px auto 10px auto;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
@@ -245,4 +245,15 @@ body.dark {
         position: initial;
         margin-right: 25px;
     }
+}
+
+#cameraOption {
+    margin: 120px auto 0 auto;
+    width: 400px;
+    height: 35px;
+    padding: 5px;
+    background: var(--light-grey);
+    border: 2px solid var(--title-color);
+    border-radius: 25px;
+    color: var(--title-color);
 }
