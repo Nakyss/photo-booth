@@ -263,12 +263,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-cameraOption.onchange = () => {
-  const updateConstraints = {
-    ...constraints,
-    deviceId: {
-      exact: cameraOption.value
-    }
-  };
-  startCamera(updateConstraints);
-};
+cameraOption.addEventListener('change', (event) => {
+    const updateConstraints = {
+        ...constraints,
+        deviceId: {
+            exact: event.target.value
+        }
+    };
+    console.log("startCamera")
+    startCamera(updateConstraints);
+});
