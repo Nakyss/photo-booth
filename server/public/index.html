@@ -30,7 +30,6 @@
 
     <select id="cameraOption">
         <option value="" disabled selected>Choisir une caméra</option>
-        
     </select>
 
     <div class="video-container">
@@ -38,17 +37,23 @@
         <canvas id="photoCanvas" class="hidden"></canvas>
     </div>
     <input type="text" id="caption" placeholder="Entrez une légende" maxlength="40">
-    
-    <button id="photoButton" class="floating-button" aria-label="Photo mode">
-        <img src="/icons/photo-icon.png" alt="Photo icon">
-    </button>
 
-    <div class="validation-buttons hidden">
+    <div class="buttons-box" id="capture">
+        <button id="photoButton" class="floating-button" aria-label="Photo mode">
+            <img src="/icons/photo-icon.png" alt="Photo icon">
+        </button>
+        <button id="importBtn" class="floating-button" aria-label="Import image">
+            <img src="/icons/import-icon.png" alt="Import">
+        </button>
+        <input type="file" id="importInput" accept="image/*" class="hidden">
+    </div>
+
+    <div class="buttons-box hidden" id="validation-buttons">
         <button id="valid" class="floating-button">
-            <img src="icons/check-icon.png" alt="Photo icon">
+            <img src="icons/check-icon.png" alt="Valider">
         </button>
         <button id="delete" class="floating-button">
-            <img src="icons/cross-icon.png" alt="Photo icon">
+            <img src="icons/cross-icon.png" alt="Annuler">
         </button>
     </div>
 

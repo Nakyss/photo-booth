@@ -1,10 +1,13 @@
 const video = document.getElementById('cameraStream');
 const canvas = document.getElementById('photoCanvas');
 const photoButton = document.getElementById('photoButton');
-const validationsButtons = document.querySelector('.validation-buttons');
+const capturesButtons = document.getElementById('capture')
+const validationsButtons = document.getElementById('validation-buttons');
 const captionInput = document.getElementById('caption');
 const ctx = canvas.getContext('2d');
 const cameraOption = document.getElementById('cameraOption')
+const importBtn = document.getElementById('importBtn');
+const importInput = document.getElementById('importInput');
 let originalImageData = null; // Stocker l'image sans texte
 
 const constraints = {
@@ -36,7 +39,7 @@ const capturePhoto = () => {
     
     video.classList.add('hidden');
     canvas.classList.remove('hidden');
-    photoButton.classList.add('hidden');
+    capturesButtons.classList.add('hidden');
     validationsButtons.classList.remove('hidden');
 }
 
@@ -136,7 +139,7 @@ document.getElementById('valid').addEventListener('click', async () => {
         canvas.classList.add('hidden');
         video.classList.remove('hidden');
         validationsButtons.classList.add('hidden');
-        photoButton.classList.remove('hidden');
+        capturesButtons.classList.remove('hidden');
     } catch (err) {
         console.error('Upload échoué:', err);
         alert('Échec de l\'upload.');
@@ -144,7 +147,7 @@ document.getElementById('valid').addEventListener('click', async () => {
         canvas.classList.add('hidden');
         video.classList.remove('hidden');
         validationsButtons.classList.add('hidden');
-        photoButton.classList.remove('hidden');
+        capturesButtons.classList.remove('hidden');
     }
 });
 
@@ -184,7 +187,7 @@ document.getElementById('delete').addEventListener('click', () => {
     canvas.classList.add('hidden');
     video.classList.remove('hidden');
     validationsButtons.classList.add('hidden');
-    photoButton.classList.remove('hidden');
+    capturesButtons.classList.remove('hidden');
 });
 
 captionInput.addEventListener('input', () => {
@@ -277,3 +280,38 @@ cameraOption.addEventListener('change', (event) => {
 
     startCamera(updateConstraints);
 });
+
+const displayImportedImage = dataURL => {
+    const img = new Image();
+    img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        canvas.classList.remove('hidden');
+        video.classList.add('hidden');
+        validationsButtons.classList.remove('hidden');
+        capturesButtons.classList.add('hidden');
+        originalImageData = ctx.getImageData(0, 0, img.width, img.height);
+        drawCaptionOnCanvas();
+    };
+    img.src = dataURL;
+}
+
+
+const onFileSelected = event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => displayImportedImage(e.target.result);
+    reader.readAsDataURL(file);
+}
+
+
+
+importBtn.addEventListener('click', () => {
+    importInput.value = '';
+    importInput.click();
+});
+
+importInput.addEventListener('change', (e) => onFileSelected(e));
