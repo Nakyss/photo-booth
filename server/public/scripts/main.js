@@ -241,8 +241,10 @@ const getCameraSelection = async () => {
     if (videoDevices.length > 0) {
         const updateConstraints = {
             ...constraints,
-            deviceId: {
-                exact: videoDevices[0].deviceId
+            video : {
+                deviceId: {
+                    exact: videoDevices[0].deviceId
+                }
             }
         };
         startCamera(updateConstraints);
@@ -266,10 +268,12 @@ document.addEventListener('DOMContentLoaded', () => {
 cameraOption.addEventListener('change', (event) => {
     const updateConstraints = {
         ...constraints,
-        deviceId: {
-            exact: event.target.value
+        video: {
+            deviceId: {
+                exact: event.target.value
+            }
         }
     };
-    console.log("startCamera", event.target.textContent)
+
     startCamera(updateConstraints);
 });
