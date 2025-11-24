@@ -270,6 +270,6 @@ cameraOption.addEventListener('change', (event) => {
             exact: event.target.value
         }
     };
-    console.log("startCamera")
+    console.log("startCamera", event.target.textContent)
     startCamera(updateConstraints);
 });
