@@ -1,0 +1,15 @@
+=== Lancement du script mer. 26 nov. 2025 19:31:03 CET ===
+Préparation AppDir : /home/raph/perso/photo-booth/qt-app/Photo-booth-x86_64.AppDir
+Copie de l'exécutable
+-rwxrwxr-x 128008 /home/raph/perso/photo-booth/qt-app/Photo-booth-x86_64.AppDir/usr/bin/Photo-booth
+Copie icône (si existe)
+Icône copiée
+Exécution : ./linuxdeployqt.AppImage /home/raph/perso/photo-booth/qt-app/Photo-booth-x86_64.AppDir/usr/bin/Photo-booth -appimage -verbose=2
+linuxdeployqt  (commit ), build 107 built on 2025-10-21 17:57:43 UTC
+ERROR: The host system is too new.
+Please run on a system with a glibc version no newer than what comes with the oldest
+currently supported mainstream distribution (Ubuntu Jammy Jellyfish), which is glibc 2.35.
+This is so that the resulting bundle will work on most still-supported Linux distributions.
+For more information, please see
+https://github.com/probonopd/linuxdeployqt/issues/340
+linuxdeployqt a retourné une erreur. Voir /home/raph/perso/photo-booth/qt-app/make-appimage.log pour la sortie complète.

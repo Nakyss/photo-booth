@@ -6,8 +6,12 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QUrl>
-#include <QFileInfo>
 #include <QDir>
+#include <QStandardPaths>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
+#include <QCoreApplication>
 
 #ifdef Q_OS_WIN
 #include <QSettings>
@@ -199,12 +203,17 @@ bool TrayManager::enableAutostart()
                                "</dict>\n"
                                "</plist>\n").arg(appName, appPath);
 
-    if (!QFile::write(plistPath, plistContent.toUtf8())) {
-        qWarning() << "Failed to write plist to" << plistPath;
+    QFile f(plistPath);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qWarning() << "Failed to open plist for writing:" << plistPath;
         return false;
     }
-    // Optionally, load it with launchctl (not necessary: system loads on next login)
-    // QProcess::execute("launchctl", QStringList() << "load" << plistPath);
+    qint64 written = f.write(plistContent.toUtf8());
+    f.close();
+    if (written == -1) {
+        qWarning() << "Failed to write plist:" << plistPath;
+        return false;
+    }
     return true;
 #else
     // freedesktop .desktop in ~/.config/autostart/
@@ -228,10 +237,18 @@ bool TrayManager::enableAutostart()
                                  "NoDisplay=false\n"
                                  ).arg(appName, QDir::toNativeSeparators(appPath));
 
-    if (!QFile::write(desktopPath, desktopContent.toUtf8())) {
-        qWarning() << "Failed to write desktop file to" << desktopPath;
+    QFile f(desktopPath);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qWarning() << "Failed to open desktop file for writing:" << desktopPath;
         return false;
     }
+    qint64 written = f.write(desktopContent.toUtf8());
+    f.close();
+    if (written == -1) {
+        qWarning() << "Failed to write desktop file:" << desktopPath;
+        return false;
+    }
+
     return true;
 #endif
 }
