@@ -21,10 +21,18 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
     QWidget *mainWindow;
+    QAction *autostartAction;
+
+private:
+    bool isAutostartEnabled() const;
+    bool enableAutostart();
+    bool disableAutostart();
 
 private slots:
     void onActivated(QSystemTrayIcon::ActivationReason reason);
     void onShowHide();
+    void onSendImages();
+    void onToggleAutostart(bool checked);
 };
 
 #endif // TRAYMANAGER_H
