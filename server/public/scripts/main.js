@@ -176,21 +176,50 @@ const drawCaptionOnCanvas = () => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     
-    // Mesurer le texte
-    const metrics = ctx.measureText(text);
-    const textWidth = metrics.width;
     const padding = 20;
+    const maxWidth = width - (padding * 2);
     
-    // Position du texte (en bas de l'image)
-    const x = width / 2;
-    const y = height - padding;
+    // Découper le texte en lignes si nécessaire
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = words[0];
     
-    // Dessiner le texte en blanc
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.strokeText(text, x, y);
-    ctx.fillText(text, x, y);
+    for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const testLine = currentLine + ' ' + word;
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+    }
+    lines.push(currentLine);
+    
+    // Position de départ (en bas de l'image)
+    const lineHeight = fontSize * 1.2;
+    const totalHeight = lines.length * lineHeight;
+    let y = height - padding;
+    
+    // Dessiner chaque ligne
+    for (let i = lines.length - 1; i >= 0; i--) {
+        const x = width / 2;
+        
+        // Contour noir
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+        ctx.strokeText(lines[i], x, y);
+        
+        // Texte blanc
+        ctx.fillStyle = 'white';
+        ctx.fillText(lines[i], x, y);
+        
+        y -= lineHeight;
+    }
 }
 
 
