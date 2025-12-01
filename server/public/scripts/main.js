@@ -83,7 +83,7 @@ const uploadCapturedPhoto = () => {
             highResCtx.drawImage(tempCanvas, 0, 0, highResCanvas.width, highResCanvas.height);
         }
         
-        // Redessiner le texte en haute résolution
+                // Redessiner le texte en haute résolution
         const text = captionInput.value.trim();
         if (text) {
             const width = highResCanvas.width;
@@ -94,23 +94,49 @@ const uploadCapturedPhoto = () => {
             highResCtx.textAlign = 'center';
             highResCtx.textBaseline = 'bottom';
             
-            const metrics = highResCtx.measureText(text);
-            const textWidth = metrics.width;
             const padding = 20 * scale;
+            const maxWidth = width - (padding * 2);
             
-            const x = width / 2;
-            const y = height - padding;
+            // Découper le texte en lignes si nécessaire
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
             
-            // Contour du texte
-            highResCtx.strokeStyle = 'black';
-            highResCtx.lineWidth = 2 * scale;
-            highResCtx.lineJoin = 'round';
-            highResCtx.miterLimit = 2;
-            highResCtx.strokeText(text, x, y);
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const testLine = currentLine + ' ' + word;
+                const metrics = highResCtx.measureText(testLine);
+                
+                if (metrics.width > maxWidth) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine);
             
-            // Texte blanc
-            highResCtx.fillStyle = 'white';
-            highResCtx.fillText(text, x, y);
+            // Position de départ (en bas de l'image)
+            const lineHeight = fontSize * 1.2;
+            let y = height - padding;
+            
+            // Dessiner chaque ligne
+            for (let i = lines.length - 1; i >= 0; i--) {
+                const x = width / 2;
+                
+                // Contour du texte
+                highResCtx.strokeStyle = 'black';
+                highResCtx.lineWidth = 2 * scale;
+                highResCtx.lineJoin = 'round';
+                highResCtx.miterLimit = 2;
+                highResCtx.strokeText(lines[i], x, y);
+                
+                // Texte blanc
+                highResCtx.fillStyle = 'white';
+                highResCtx.fillText(lines[i], x, y);
+                
+                y -= lineHeight;
+            }
         }
         
         // Convertir le canvas haute résolution en blob
