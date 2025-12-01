@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Guide d'installation — Mon Application</title>
+	<link rel="stylesheet" href="styles/install_guide.css">
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div>
+				<h1>Guide d'installation - Photo-booth</h1>
+				<p class="lead">Choisissez votre système d'exploitation ci-dessous.</p>
+			</div>
+		</header>
+		
+		<div class="card">
+			<div class="tabs" role="tablist" aria-label="Systèmes d'exploitation">
+				<button class="tab active" data-target="windows">Windows</button>
+				<button class="tab" data-target="linux">Linux</button>
+				<button class="tab" data-target="mac">macOS</button>
+			</div>
+			
+			<div class="grid">
+				<main id="content">						
+					<!-- WINDOWS -->
+					<section id="windows" class="os-section">
+						<h2>Windows</h2>
+						<p class="meta">Supporté : Windows 10 et supérieur</p>
+
+						<a class="dl-button" href="clients/windows/Photo-booth-Release-0.2.zip">Télécharger</a>
+							
+						<div class="section">
+							<h3>Installation</h3>
+							<p>Téléchargez le fichier<code>.zip</code></p>
+							<p>Extrayez-le dans le dossier de votre choix</p> 
+							<p>Lancez <code>Photo-booth.exe</code></p>
+							<p class="meta"></p>
+						</div>
+
+						<div class="section">
+							<h3>Message de sécurité Windows</h3>
+							<p>Au premier lancement, Windows affichera un message de sécurité car l'application n'est pas signée numériquement.</p>
+							
+							<p style="margin-left: 2rem; font-weight: 500;">Pour passer ce message :</p>
+							<ol>
+								<li>Cliquez sur <strong>"Informations complémentaires"</strong></li>
+								<li>Puis sur <strong>"Exécuter quand même"</strong></li>
+							</ol>
+							
+							<p class="meta">Ce message est normal. L'application est sûre.</p>
+						</div>
+							
+					</section>
+
+					<!-- LINUX -->
+					<section id="linux" class="os-section" style="display:none">
+						<h2>Linux</h2>
+						<p class="meta">Distribution recommandée : <strong>Ubuntu, Debian ...</strong></p>
+
+						<a class="dl-button" href="clients/linux/Photo-booth-x86_64-v0.2.AppImage">Télécharger</a>
+		
+						
+						<div class="section">
+							<h3>Installation</h3>
+
+							<p>Téléchargez le fichier AppImage, puis rendez-le exécutable :</p>
+
+							<p style="margin-left: 2rem; font-weight: 500;">En ligne de commande :</p>
+							<pre><code>chmod +x Photo-booth-x86_64-v0.2.AppImage</code></pre>
+							
+							<p style="margin-left: 2rem; font-weight: 500;">Interface graphique :</p>
+							<ul>
+								<li>Clic droit sur le fichier téléchargé</li>
+								<li>Propriétés &gt; Permissions</li>
+								<li>Cochez "Autoriser l'exécution du fichier comme un programme"</li>
+							</ul>
+
+						</div>
+							
+						<div class="section">
+							<h3>Lancer au démarrage</h3>
+
+							<p>Il y a une erreur avec cette option pour le moment, <strong>Voici comment la réparer :</strong></p>
+
+							<div class="tutow-image">
+								<img src="img/menu-photo-booth.png">
+								<p>Activer l'option 'Lancer au démarrage'</p>
+							</div>
+
+							<div class="tutow-image">
+								<img src="img/app_demarrage.png">
+								<p>Ouvrir l'application 'Application au démarage'</p>
+							</div>
+
+							<div class="tutow-image">
+								<img src="img/menu_demarage.png">
+								<p>Editer la configuration de photo-booth</p>
+							</div>
+
+							<div class="tutow-image">
+								<img src="img/configuration_demarrage.png">
+								<p>Remplacer l'emplacement par le fichier AppImage de l'application <br> Enregistrer</p>
+							</div>
+
+						</div>
+
+					</section>
+						
+					<!-- MAC -->
+					<section id="mac" class="os-section" style="display:none">
+						<h2>macOS</h2>
+						
+						<a class="dl-button" href="clients/mac/Photo-booth-v0.2.zip">Télécharger</a>
+
+						<p>Demander à Elio ou Nylphen</p>
+
+					</section>
+	
+				</main>
+			</div>
+		</div>
+	</div>
+		
+	<script>
+		// Tabs simple
+		const tabs = document.querySelectorAll('.tab');
+		const sections = document.querySelectorAll('.os-section');
+		tabs.forEach(t => t.addEventListener('click', () => {
+			tabs.forEach(x=>x.classList.remove('active'));
+			t.classList.add('active');
+			const target = t.dataset.target;
+			sections.forEach(s => s.style.display = s.id === target ? '' : 'none');
+			// focus first heading for accessibility
+			document.querySelector('#'+target+' h2').focus?.();
+		}));
+
+		if (localStorage.getItem("theme") === "dark") {
+			document.body.classList.add("dark");
+		}
+	</script>
+</body>
+</html>
