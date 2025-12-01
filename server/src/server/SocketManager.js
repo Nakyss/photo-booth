@@ -47,7 +47,7 @@ export default class SocketManager {
             data: { image: img, message }
         });
         this.broadcastAll(payload);
-        console.log('Broadcasting photo:', img);
+        console.log('New picture:', img);
     }
 
     broadcastExcept(exclude, event, data) {

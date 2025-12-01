@@ -64,10 +64,9 @@ export default class AppServer {
             }
 
             const publicPath = `/uploads/${req.file.filename}`;
-            const fullPath = join(this.uploadsDir, req.file.filename);
 
             // Schedule deletion after TTL
-            this._scheduleDeletion(req.file.filename, fullPath, this.uploadTtlMs);
+            this._scheduleDeletion(req.file.filename, publicPath, this.uploadTtlMs);
 
             if (this.socketManager) {
                 this.socketManager.broadcastPhoto(publicPath, req.body.message || '' );
@@ -109,7 +108,7 @@ export default class AppServer {
                     // fichier peut déjà avoir été supprimé
                     console.warn(`Erreur suppression fichier ${fullPath}:`, err.message);
                 } else {
-                    console.log(`Fichier supprimé: ${fullPath}`);
+                    console.log(`File deleted: ${fullPath}`);
                 }
                 this._scheduledDeletions.delete(filename);
             });
@@ -133,7 +132,7 @@ export default class AppServer {
                     if (age >= this.uploadTtlMs) {
                         // trop vieux -> supprimer immédiatement
                         fs.unlinkSync(p);
-                        console.log(`Fichier ancien supprimé au démarrage: ${p}`);
+                        console.log(`Old files deleted at start: ${p}`);
                     } else {
                         // planifier suppression restante
                         const remaining = this.uploadTtlMs - age;
