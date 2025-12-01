@@ -62,6 +62,10 @@ const uploadCapturedPhoto = () => {
             scale = Math.min(scaleWidth, scaleHeight);
         }
         
+        highResCanvas.width = Math.floor(canvas.width * scale);
+        highResCanvas.height = Math.floor(canvas.height * scale);
+
+
         // Améliorer la qualité du rendu
         highResCtx.imageSmoothingEnabled = true;
         highResCtx.imageSmoothingQuality = 'high';
