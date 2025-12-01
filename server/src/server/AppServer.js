@@ -64,9 +64,10 @@ export default class AppServer {
             }
 
             const publicPath = `/uploads/${req.file.filename}`;
+            const fullPath = join(this.uploadsDir, req.file.filename);
 
             // Schedule deletion after TTL
-            this._scheduleDeletion(req.file.filename, publicPath, this.uploadTtlMs);
+            this._scheduleDeletion(req.file.filename, fullPath, this.uploadTtlMs);
 
             if (this.socketManager) {
                 this.socketManager.broadcastPhoto(publicPath, req.body.message || '' );
@@ -97,6 +98,8 @@ export default class AppServer {
     }
 
     _scheduleDeletion(filename, fullPath, delayMs) {
+        const publicPath = `/uploads/${filename}`;
+
         // If already scheduled, clear and reschedule
         if (this._scheduledDeletions.has(filename)) {
             clearTimeout(this._scheduledDeletions.get(filename));
@@ -106,9 +109,9 @@ export default class AppServer {
             fs.unlink(fullPath, (err) => {
                 if (err) {
                     // fichier peut déjà avoir été supprimé
-                    console.warn(`Erreur suppression fichier ${fullPath}:`, err.message);
+                    console.warn(`Erreur suppression fichier ${publicPath}:`, err.message);
                 } else {
-                    console.log(`File deleted: ${fullPath}`);
+                    console.log(`File deleted: ${publicPath}`);
                 }
                 this._scheduledDeletions.delete(filename);
             });
