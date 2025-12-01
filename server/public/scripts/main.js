@@ -315,3 +315,27 @@ importBtn.addEventListener('click', () => {
 });
 
 importInput.addEventListener('change', (e) => onFileSelected(e));
+
+
+const handlePasteImage = (event) => {
+    const items = event.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of items) {
+        if (item.type.startsWith("image/")) {
+            const file = item.getAsFile();
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                displayImportedImage(e.target.result);
+            };
+
+            reader.readAsDataURL(file);
+
+            event.preventDefault();
+            return;
+        }
+    }
+};
+
+document.addEventListener("paste", handlePasteImage);
