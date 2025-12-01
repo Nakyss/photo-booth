@@ -50,10 +50,17 @@ const uploadCapturedPhoto = () => {
         const highResCanvas = document.createElement('canvas');
         const highResCtx = highResCanvas.getContext('2d');
         
-        // Multiplier la résolution (2x, 3x, ou 4x selon les besoins)
-        const scale = 2;
-        highResCanvas.width = canvas.width * scale;
-        highResCanvas.height = canvas.height * scale;
+        // Calculer le scale pour atteindre 1920x1080 sans dépasser
+        const targetWidth = 1920;
+        const targetHeight = 1080;
+        let scale = 1;
+        
+        if (canvas.width < targetWidth && canvas.height < targetHeight) {
+            // Calculer le scale nécessaire pour atteindre au moins une des dimensions cibles
+            const scaleWidth = targetWidth / canvas.width;
+            const scaleHeight = targetHeight / canvas.height;
+            scale = Math.min(scaleWidth, scaleHeight);
+        }
         
         // Améliorer la qualité du rendu
         highResCtx.imageSmoothingEnabled = true;
