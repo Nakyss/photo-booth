@@ -168,15 +168,44 @@ photoButton.addEventListener('click', async () => {
     capturePhoto();
 });
 
+const showNotification = () => {
+    const toolbox = document.querySelector('.toolbox');
+    const notification = document.createElement('div');
+    notification.classList.add('notification');
+
+    const imageDataURL = canvas.toDataURL('image/png');
+
+    notification.innerHTML = `
+        <img src="${imageDataURL}" alt="Envoi en cours">
+        <p>Envoie en cours</p>
+    `;
+    toolbox.appendChild(notification);
+    
+    return notification;
+}
+
+const hideNotification = (notification) => {
+    notification.querySelector('p').textContent = 'Envoi terminé';
+    setTimeout(() => {
+        notification.remove();
+    }, 2000);
+}
+
+
 document.getElementById('valid').addEventListener('click', async () => {
     try {
-        const result = await uploadCapturedPhoto();
-        console.log('Upload réussi:', result);
-        // Remettre la caméra et cacher le canvas
+        const notification = showNotification();
+
         canvas.classList.add('hidden');
         video.classList.remove('hidden');
         validationsButtons.classList.add('hidden');
         capturesButtons.classList.remove('hidden');
+
+        const result = await uploadCapturedPhoto();
+        console.log('Upload réussi:', result);
+        hideNotification(notification);
+        // Remettre la caméra et cacher le canvas
+
     } catch (err) {
         console.error('Upload échoué:', err);
         alert('Échec de l\'upload.');

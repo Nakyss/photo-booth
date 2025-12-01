@@ -9,6 +9,7 @@ body {
     --bg-color: #ffffff;
     --title-color: #333;
     --light-grey: #ccc;
+    --notif-color: #b8b8b8;
     background: var(--bg-color);
     min-height: 100vh;
     display: flex;
@@ -20,6 +21,7 @@ body.dark {
     --bg-color: #071023;
     --title-color: #ddd;
     --light-grey: #555;
+    --notif-color: #000000;
 }
 
 .checkbox {
@@ -254,4 +256,30 @@ body.dark {
     border: 2px solid var(--title-color);
     border-radius: 25px;
     color: var(--title-color);
+}
+
+.toolbox {
+    position:absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    background: var(--notif-color);
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: var(--title-color);
+    font-size: 14px;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.notification img {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    object-fit: cover;
 }
