@@ -83,7 +83,7 @@ const uploadCapturedPhoto = () => {
             highResCtx.drawImage(tempCanvas, 0, 0, highResCanvas.width, highResCanvas.height);
         }
         
-                // Redessiner le texte en haute résolution
+        // Redessiner le texte en haute résolution
         const text = captionInput.value.trim();
         if (text) {
             const width = highResCanvas.width;
@@ -94,7 +94,7 @@ const uploadCapturedPhoto = () => {
             highResCtx.textAlign = 'center';
             highResCtx.textBaseline = 'bottom';
             
-            const padding = 20 * scale;
+            const padding = fontSize /2;
             const maxWidth = width - (padding * 2);
             
             // Découper le texte en lignes si nécessaire
@@ -231,7 +231,7 @@ const drawCaptionOnCanvas = () => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     
-    const padding = 20;
+    const padding = fontSize / 2 ;
     const maxWidth = width - (padding * 2);
     
     // Découper le texte en lignes si nécessaire
