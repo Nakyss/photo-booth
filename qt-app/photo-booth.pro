@@ -23,6 +23,7 @@ SOURCES += \
 
 HEADERS += \
     filedownloader.h \
+    overlay_mac.h \
     photobooth.h \
     overlay.h \
     photobooth.h \
@@ -39,3 +40,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     data.qrc
+
+LIBS += -framework Cocoa -framework ApplicationServices -framework CoreGraphics
+OBJECTIVE_SOURCES += overlay_mac.mm
