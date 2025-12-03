@@ -28,8 +28,11 @@ private slots:
 private:
     QUrl m_url;
     FileDownloader *m_downloader = nullptr;
-    Overlay *m_overlay = nullptr;
-    OverlayMac *mac_overlay = nullptr;
+    #ifdef Q_OS_MAC
+        OverlayMac *mac_overlay = nullptr;
+    #else
+        Overlay *m_overlay = nullptr;
+    #endif
     QPixmap *m_pixmap = nullptr;
     int m_displayMs;
 };

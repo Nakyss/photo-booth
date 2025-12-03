@@ -2,6 +2,9 @@
 #include <QTimer>
 #include <QUrl>
 
+#define WEBSOCKET_HOST "wss://photo.nakyss.fr"
+//#define WEBSOCKET_HOST "ws://localhost:59875"
+
 PhotoBooth::PhotoBooth(QWidget *parent)
     : QMainWindow(parent)
     , client(nullptr)
@@ -12,13 +15,21 @@ PhotoBooth::PhotoBooth(QWidget *parent)
     infoText = new QLabel("Il n'y a rien a voir ici, tu peut fermer la fenetre ça reste en arrière plan", this);
     infoText->adjustSize();
 
-    client = new WebSocketClient(QUrl(QStringLiteral("wss://photo.nakyss.fr")), this);
+    client = new WebSocketClient(QUrl(QStringLiteral(WEBSOCKET_HOST)), this);
 
     trayManager = new TrayManager(this, this);
 
     // connexion pour recevoir l'URL et démarrer le téléchargement
     connect(client, &WebSocketClient::imageReceived,
             this, &PhotoBooth::handleImageUrl, Qt::QueuedConnection);
+
+    // si WebSocketClient expose connected() et disconnected() :
+    connect(client, &WebSocketClient::connected,
+            trayManager, [this]() { trayManager->setConnected(true); }, Qt::QueuedConnection);
+
+    connect(client, &WebSocketClient::disconnected,
+            trayManager, [this]() { trayManager->setConnected(false); }, Qt::QueuedConnection);
+
 }
 
 PhotoBooth::~PhotoBooth()

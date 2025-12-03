@@ -33,6 +33,9 @@ private slots:
     void onShowHide();
     void onSendImages();
     void onToggleAutostart(bool checked);
+
+public slots:
+    void setConnected(bool connected);
 };
 
 #endif // TRAYMANAGER_H

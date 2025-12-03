@@ -23,13 +23,16 @@ SOURCES += \
 
 HEADERS += \
     filedownloader.h \
-    overlay_mac.h \
     photobooth.h \
     overlay.h \
     photobooth.h \
     session.h \
     traymanager.h \
     websocketclient.h
+
+macx {
+    HEADERS += overlay_mac.h
+}
 
 RC_ICONS = data/icons/logo.ico
 
@@ -41,5 +44,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     data.qrc
 
-LIBS += -framework Cocoa -framework ApplicationServices -framework CoreGraphics
-OBJECTIVE_SOURCES += overlay_mac.mm
+
+macx {
+    LIBS += -framework Cocoa -framework ApplicationServices -framework CoreGraphics
+    OBJECTIVE_SOURCES += overlay_mac.mm
+}
+

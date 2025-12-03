@@ -2,5 +2,6 @@
     <qresource prefix="/icons">
         <file>data/icons/icon.png</file>
         <file>data/icons/logo.ico</file>
+        <file>data/icons/icon-red.png</file>
     </qresource>
 </RCC>

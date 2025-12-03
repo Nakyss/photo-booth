@@ -41,13 +41,11 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     // Menu contextuel
     trayMenu = new QMenu();
 
-    //QAction *showHideAction = new QAction(tr("Afficher / Cacher"), this);
     QAction *sendImagesAction = new QAction(tr("Envoyer des images"), this);
     autostartAction = new QAction(tr("Lancer au démarrage"), this);
     autostartAction->setCheckable(true);
     QAction *quitAction     = new QAction(tr("Quitter"), this);
 
-    //trayMenu->addAction(showHideAction);
     trayMenu->addAction(sendImagesAction);
     trayMenu->addAction(autostartAction);
     trayMenu->addSeparator();
@@ -57,7 +55,7 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
 
     // Connexions
     connect(trayIcon, &QSystemTrayIcon::activated, this, &TrayManager::onActivated);
-    //connect(showHideAction, &QAction::triggered, this, &TrayManager::onShowHide);
+
     connect(autostartAction, &QAction::toggled, this, &TrayManager::onToggleAutostart);
 
     // Ouvre la page https://photo.nakyss.fr dans le navigateur par défaut
@@ -95,12 +93,12 @@ void TrayManager::onActivated(QSystemTrayIcon::ActivationReason reason)
 {
     // Clique gauche = toggle show/hide
     if (reason == QSystemTrayIcon::Trigger) {
-        onShowHide();
+       // onShowHide();
     }
     // Clique droit ouvre le menu par défaut (Qt le gère déjà),
     // double-clic pourrait aussi afficher la fenêtre :
     if (reason == QSystemTrayIcon::DoubleClick) {
-        onShowHide();
+        //onShowHide();
     }
 }
 
@@ -282,4 +280,40 @@ bool TrayManager::disableAutostart()
     }
     return true;
 #endif
+}
+
+
+void TrayManager::setConnected(bool connected)
+{
+    if (!trayIcon) return;
+
+    // chemins d'icônes attendus dans le qrc (à adapter si tu as d'autres noms)
+    const QString iconOkPath   = QStringLiteral(":/icons/data/icons/icon.png");
+    const QString iconErrorPath= QStringLiteral(":/icons/data/icons/icon-red.png"); // icône rouge
+
+    QIcon ic;
+
+    if (connected) {
+        if (QFile::exists(iconOkPath)) {
+            ic = QIcon(iconOkPath);
+        } else {
+            // fallback sur le thème du système
+            ic = QIcon::fromTheme(QStringLiteral("network-transmit-receive"));
+        }
+        trayIcon->setToolTip(tr("PhotoBooth — connecté"));
+    } else {
+        if (QFile::exists(iconErrorPath)) {
+            ic = QIcon(iconErrorPath);
+        } else {
+            // fallback sur le thème du système
+            ic = QIcon::fromTheme(QStringLiteral("network-error"));
+        }
+        trayIcon->setToolTip(tr("PhotoBooth — déconnecté"));
+    }
+
+    if (!ic.isNull()) {
+        trayIcon->setIcon(ic);
+    } else {
+        qWarning() << "TrayManager::setConnected : aucune icône trouvée pour état" << connected;
+    }
 }
