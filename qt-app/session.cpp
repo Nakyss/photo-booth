@@ -1,5 +1,7 @@
 #include "session.h"
+#include "overlay_mac.h"
 #include <QDebug>
+#include <QOperatingSystemVersion>
 
 Session::Session(const QUrl &imageUrl, int displayMs, QObject *parent)
     : QObject(parent), m_url(imageUrl), m_displayMs(displayMs)
@@ -56,8 +58,11 @@ void Session::onDownloaded()
     }
 
     // crée et affiche l'overlay — parent à nullptr pour qu'il apparaisse comme fenêtre indépendante
-    m_overlay = new Overlay(nullptr, m_pixmap);
-    m_overlay->show();
+    #ifdef Q_OS_MAC
+        mac_overlay = new OverlayMac(nullptr, m_pixmap);
+    #else
+        m_overlay = new Overlay(nullptr, m_pixmap);
+    #endif
 
     // Timer de durée d'affichage : singleShot pour auto-terminer la session
     QTimer::singleShot(m_displayMs, this, &Session::onTimeout);
@@ -65,29 +70,39 @@ void Session::onDownloaded()
 
 void Session::onTimeout()
 {
-    // Fermer l'overlay proprement
+#ifdef Q_OS_MAC
+    // --- MAC OS ---
+    if (mac_overlay) {
+        mac_overlay->close();
+        mac_overlay->deleteLater();
+        mac_overlay = nullptr;
+    }
+#else
+    // --- WINDOWS / LINUX ---
     if (m_overlay) {
         m_overlay->close();
         m_overlay->deleteLater();
         m_overlay = nullptr;
     }
+#endif
 
-    // libère pixmap
+    // Libère le QPixmap
     if (m_pixmap) {
         delete m_pixmap;
         m_pixmap = nullptr;
     }
 
-    // le downloader appartient à 'this' ; on peut le supprimer aussi
+    // Nettoyage du downloader
     if (m_downloader) {
         m_downloader->deleteLater();
         m_downloader = nullptr;
     }
 
-    // Signal à PhotoBooth pour nettoyage / démarrage file
+    // Signale la fin de la session
     emit finished(this);
 
-    // s'auto-détruit
+    // Auto-destruction de la session
     deleteLater();
 }
+
 
