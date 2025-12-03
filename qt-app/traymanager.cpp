@@ -12,24 +12,35 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QCoreApplication>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 #ifdef Q_OS_WIN
 #include <QSettings>
 #include <windows.h>
 #endif
 
+#define BASE_URL "https://photo.nakyss.fr/users"
+//#define BASE_URL "http://localhost:59875/users"
+
 TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     : QObject(parent),
     trayIcon(nullptr),
     trayMenu(nullptr),
     mainWindow(mainWindow),
-    autostartAction(nullptr)
+    autostartAction(nullptr),
+    clientCountAction(nullptr),
+    netManager(nullptr),
+    clientCountApiUrl(QStringLiteral(BASE_URL))
 {
     // Vérifie la disponibilité du tray
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         qWarning() << "System tray not available on this platform.";
         return;
     }
+
+    netManager = new QNetworkAccessManager(this);
+    connect(netManager, &QNetworkAccessManager::finished, this, &TrayManager::onClientCountReply);
 
     QIcon icon(":/icons/data/icons/icon.png");
     if (icon.isNull()) {
@@ -44,10 +55,16 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     QAction *sendImagesAction = new QAction(tr("Envoyer des images"), this);
     autostartAction = new QAction(tr("Lancer au démarrage"), this);
     autostartAction->setCheckable(true);
-    QAction *quitAction     = new QAction(tr("Quitter"), this);
+
+    clientCountAction = new QAction(tr("Clients connectés : —"), this);
+    clientCountAction->setEnabled(false); // juste pour afficher l'info
+
+    QAction *quitAction = new QAction(tr("Quitter"), this);
 
     trayMenu->addAction(sendImagesAction);
     trayMenu->addAction(autostartAction);
+    trayMenu->addSeparator();
+    trayMenu->addAction(clientCountAction);
     trayMenu->addSeparator();
     trayMenu->addAction(quitAction);
 
@@ -62,6 +79,8 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     connect(sendImagesAction, &QAction::triggered, this, &TrayManager::onSendImages);
 
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+
+    connect(trayMenu, &QMenu::aboutToShow, this, &TrayManager::refreshClientCount);
 
     bool enabled = isAutostartEnabled();
     autostartAction->setChecked(enabled);
@@ -315,5 +334,55 @@ void TrayManager::setConnected(bool connected)
         trayIcon->setIcon(ic);
     } else {
         qWarning() << "TrayManager::setConnected : aucune icône trouvée pour état" << connected;
+    }
+}
+
+
+void TrayManager::refreshClientCount()
+{
+    if (!netManager) return;
+
+    // Mettre le texte en mode chargement
+    if (clientCountAction) {
+        clientCountAction->setText(tr("Clients connectés : …"));
+    }
+
+    QUrl url(clientCountApiUrl);
+    QNetworkRequest req(url);
+    netManager->get(req);
+}
+
+void TrayManager::onClientCountReply(QNetworkReply* reply)
+{
+    if (!reply) return;
+
+    QUrl requestUrl = reply->request().url();
+
+    // lecture
+    if (reply->error() != QNetworkReply::NoError) {
+        qWarning() << "Client count request failed:" << reply->errorString();
+        if (clientCountAction) clientCountAction->setText(tr("Clients connectés : ? (erreur)"));
+        reply->deleteLater();
+        return;
+    }
+
+    QByteArray data = reply->readAll();
+    reply->deleteLater();
+
+    int count = -1;
+
+
+    bool ok = false;
+    QString s = QString::fromUtf8(data).trimmed();
+    int maybe = s.toInt(&ok);
+    if (ok) {
+        count = maybe;
+    }
+
+    if (ok && clientCountAction) {
+        clientCountAction->setText(tr("Clients connectés : %1").arg(QString::number(count)));
+    } else {
+        if (clientCountAction) clientCountAction->setText(tr("Clients connectés : ?"));
+        qWarning() << "Could not parse client count response from" << requestUrl << "data:" << QString::fromUtf8(data);
     }
 }

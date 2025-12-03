@@ -7,6 +7,9 @@
 
 class QWidget;
 
+class QNetworkAccessManager;
+class QNetworkReply;
+
 class TrayManager : public QObject
 {
     Q_OBJECT
@@ -22,6 +25,10 @@ private:
     QMenu *trayMenu;
     QWidget *mainWindow;
     QAction *autostartAction;
+    QAction *clientCountAction;
+
+    QNetworkAccessManager *netManager;
+    QString clientCountApiUrl;
 
 private:
     bool isAutostartEnabled() const;
@@ -33,6 +40,9 @@ private slots:
     void onShowHide();
     void onSendImages();
     void onToggleAutostart(bool checked);
+
+    void refreshClientCount();
+    void onClientCountReply(QNetworkReply* reply);
 
 public slots:
     void setConnected(bool connected);
