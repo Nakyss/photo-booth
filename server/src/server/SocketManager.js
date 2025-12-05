@@ -50,10 +50,10 @@ export default class SocketManager {
             // Note: ws gère déjà le ping entrant venant de Qt et répond pong automatiquement.
             // On peut ajouter ceci pour le debug si besoin :
             
-            ws.on('ping', () => {
+            /*ws.on('ping', () => {
                 console.log('Ping reçu du client (Qt), Pong envoyé auto.');
                 ws.isAlive = true;
-            });
+            });*/
             
 
             ws.on('close', () => this.handleDisconnect(ws));
