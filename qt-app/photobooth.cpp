@@ -2,8 +2,8 @@
 #include <QTimer>
 #include <QUrl>
 
-#define WEBSOCKET_HOST "wss://photo.nakyss.fr"
-//#define WEBSOCKET_HOST "ws://localhost:59875"
+//#define WEBSOCKET_HOST "wss://photo.nakyss.fr"
+#define WEBSOCKET_HOST "ws://localhost:59875"
 
 PhotoBooth::PhotoBooth(QWidget *parent)
     : QMainWindow(parent)

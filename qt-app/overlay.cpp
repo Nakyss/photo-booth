@@ -6,7 +6,7 @@
 
 Overlay::Overlay(QWidget *parent, QPixmap *image)
     : QWidget(parent) {
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_ShowWithoutActivating);
     setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -23,6 +23,7 @@ Overlay::Overlay(QWidget *parent, QPixmap *image)
     label->resize(this->size());
 
     this->show();
+
     this->raise();
     this->activateWindow(); // Assure que l'overlay capte les touches
 }

@@ -25,12 +25,20 @@ private slots:
     void onDisconnected();
     void attemptReconnect();
 
+    void sendPing();
+    void onPong(quint64 elapsedTime, const QByteArray &payload);
+    void onPongTimeout();
+    void onError(QAbstractSocket::SocketError error);
+
 private:
     QWebSocket m_webSocket;
     QUrl m_url;
     QTimer *m_reconnectTimer;
     int m_reconnectAttempts;
     int m_maxReconnectAttempts;
+
+    QTimer *m_pingTimer;
+    QTimer *m_pongTimeoutTimer;
 };
 
 #endif // WEBSOCKETCLIENT_H

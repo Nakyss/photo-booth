@@ -12,6 +12,9 @@ export default class UserManager {
         return user;
     }
 
+    getUser(userId) {
+        return this.connectedUsers.get(userId);
+    }
 
     removeUser(userId) {
         this.connectedUsers.delete(userId);

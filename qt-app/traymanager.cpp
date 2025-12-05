@@ -20,8 +20,8 @@
 #include <windows.h>
 #endif
 
-#define BASE_URL "https://photo.nakyss.fr/users"
-//#define BASE_URL "http://localhost:59875/users"
+//#define BASE_URL "https://photo.nakyss.fr/users"
+#define BASE_URL "http://localhost:59875/users"
 
 TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     : QObject(parent),
