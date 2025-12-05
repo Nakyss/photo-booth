@@ -1,8 +1,8 @@
 #include "websocketclient.h"
 #include <QDebug>
 
-//#define BASE_URL "https://photo.nakyss.fr"
-#define BASE_URL "http://localhost:59875"
+#define BASE_URL "https://photo.nakyss.fr"
+//#define BASE_URL "http://localhost:59875"
 
 const int PING_INTERVAL_MS = 10000;   // Envoyer un ping toutes les 10 secondes
 const int PONG_TIMEOUT_MS = 3000;     // Attendre le pong max 3 secondes
