@@ -17,6 +17,10 @@ body {
     transition: background 0.2s linear;
 }
 
+body.dragging {
+    background: rgba(0, 102, 204, 0.1);
+}
+
 body.dark {
     --bg-color: #071023;
     --title-color: #ddd;
