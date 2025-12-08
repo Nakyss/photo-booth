@@ -263,7 +263,7 @@ const drawCaptionOnCanvas = () => {
         
         // Contour noir
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 4;
         ctx.lineJoin = 'round';
         ctx.miterLimit = 2;
         ctx.strokeText(lines[i], x, y);
