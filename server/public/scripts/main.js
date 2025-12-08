@@ -126,9 +126,8 @@ const uploadCapturedPhoto = () => {
                 
                 // Contour du texte
                 highResCtx.strokeStyle = 'black';
-                highResCtx.lineWidth = 2 * scale;
+                highResCtx.lineWidth = 4 * scale;
                 highResCtx.lineJoin = 'round';
-                highResCtx.miterLimit = 2;
                 highResCtx.strokeText(lines[i], x, y);
                 
                 // Texte blanc
@@ -142,6 +141,14 @@ const uploadCapturedPhoto = () => {
         // Convertir le canvas haute résolution en blob
         highResCanvas.toBlob(async (blob) => {
             if (!blob) return reject(new Error('Impossible de créer le blob'));
+
+            // Afficher les informations de l'image générée
+            console.log('Image générée:');
+            console.log(`  - Dimensions: ${highResCanvas.width}x${highResCanvas.height}px`);
+            console.log(`  - Taille: ${(blob.size / 1024).toFixed(2)} KB / 15 MB`);
+            console.log(`  - Scale appliqué: ${scale.toFixed(2)}x`);
+    
+
             const form = new FormData();
             form.append('image', blob, `photo-${Date.now()}.png`);
             form.append('message', '');
@@ -160,7 +167,7 @@ const uploadCapturedPhoto = () => {
             } catch (e) {
                 reject(e);
             }
-        }, 'image/png');
+        }, 'image/png', 0.85);
     });
 }
 
@@ -264,7 +271,7 @@ const drawCaptionOnCanvas = () => {
         
         // Contour noir
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 4;
         ctx.lineJoin = 'round';
         ctx.miterLimit = 2;
         ctx.strokeText(lines[i], x, y);
