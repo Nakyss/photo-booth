@@ -126,7 +126,7 @@ const uploadCapturedPhoto = () => {
                 
                 // Contour du texte
                 highResCtx.strokeStyle = 'black';
-                highResCtx.lineWidth = 4 * scale;
+                highResCtx.lineWidth = 5;
                 highResCtx.lineJoin = 'round';
                 highResCtx.strokeText(lines[i], x, y);
                 
@@ -145,7 +145,7 @@ const uploadCapturedPhoto = () => {
             // Afficher les informations de l'image générée
             console.log('📸 Image générée:');
             console.log(`  - Dimensions: ${highResCanvas.width}x${highResCanvas.height}px`);
-            console.log(`  - Taille: ${(blob.size / 1024).toFixed(2)} KB`);
+            console.log(`  - Taille: ${(blob.size / 1024 ).toFixed(2)} KB / 15 MB`);
             console.log(`  - Scale appliqué: ${scale.toFixed(2)}x`);
             
 
