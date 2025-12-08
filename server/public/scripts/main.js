@@ -466,4 +466,40 @@ const handlePasteImage = (event) => {
     }
 };
 
+const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    document.body.classList.add('dragging');
+};
+
+const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    document.body.classList.remove('dragging');
+};
+
+const handleDrop = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    document.body.classList.remove('dragging');
+    
+    const files = event.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+    
+    const file = files[0];
+    if (!file.type.startsWith("image/")) {
+        alert("Veuillez déposer une image");
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        displayImportedImage(e.target.result);
+    };
+    reader.readAsDataURL(file);
+};
+
 document.addEventListener("paste", handlePasteImage);
+document.addEventListener("dragover", handleDragOver);
+document.addEventListener("dragleave", handleDragLeave);
+document.addEventListener("drop", handleDrop);
