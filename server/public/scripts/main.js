@@ -8,6 +8,7 @@ const ctx = canvas.getContext('2d');
 const cameraOption = document.getElementById('cameraOption')
 const importBtn = document.getElementById('importBtn');
 const importInput = document.getElementById('importInput');
+const inverseBtn = document.getElementById('inverseBtn');
 let originalImageData = null; // Stocker l'image sans texte
 
 const constraints = {
@@ -369,6 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
     getCameraSelection();
 });
 
+inverseBtn.addEventListener('click', () => {
+    video.classList.toggle('inversed');
+});
 
 cameraOption.addEventListener('change', (event) => {
     const updateConstraints = {
