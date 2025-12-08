@@ -55,12 +55,12 @@ const uploadCapturedPhoto = () => {
         const targetHeight = 1080;
         let scale = 1;
         
-        if (canvas.width < targetWidth && canvas.height < targetHeight) {
+        //if (canvas.width < targetWidth && canvas.height < targetHeight) {
             // Calculer le scale nécessaire pour atteindre au moins une des dimensions cibles
             const scaleWidth = targetWidth / canvas.width;
             const scaleHeight = targetHeight / canvas.height;
             scale = Math.min(scaleWidth, scaleHeight);
-        }
+        //}
         
         highResCanvas.width = Math.floor(canvas.width * scale);
         highResCanvas.height = Math.floor(canvas.height * scale);
@@ -139,48 +139,18 @@ const uploadCapturedPhoto = () => {
         }
         
         // Convertir le canvas haute résolution en blob
-        const tryCompress = async (canvas, quality = 0.95, format = 'image/png') => {
-            return new Promise((resolve) => {
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, format, quality);
-            });
-        };
-
         highResCanvas.toBlob(async (blob) => {
             if (!blob) return reject(new Error('Impossible de créer le blob'));
-
-            const MAX_SIZE = 15 * 1024 * 1024; // 15 MB
-            let finalBlob = blob;
-            let quality = 0.95;
-            let format = 'image/png';
-            
-            // Si l'image dépasse 15 MB, recompresser
-            if (blob.size > MAX_SIZE) {
-                console.warn(`⚠️ Image trop volumineuse: ${(blob.size / 1024 / 1024).toFixed(2)} MB`);
-                console.log('Compression en cours...');
-                
-                // Essayer différents niveaux de compression
-                while (quality > 0.5 && finalBlob.size > MAX_SIZE) {
-                    quality -= 0.05;
-                    finalBlob = await tryCompress(highResCanvas, quality, format);
-                    console.log(`  - Qualité ${(quality * 100).toFixed(0)}%: ${(finalBlob.size / 1024 / 1024).toFixed(2)} MB`);
-                }
-                
-                if (finalBlob.size > MAX_SIZE) {
-                    return reject(new Error(`Impossible de compresser l'image en dessous de 15 MB (${(finalBlob.size / 1024 / 1024).toFixed(2)} MB)`));
-                }
-            }
 
             // Afficher les informations de l'image générée
             console.log('📸 Image générée:');
             console.log(`  - Dimensions: ${highResCanvas.width}x${highResCanvas.height}px`);
-            console.log(`  - Taille: ${(finalBlob.size / 1024 / 1024).toFixed(2)} MB / 15 MB`);
+            console.log(`  - Taille: ${(blob.size / 1024).toFixed(2)} KB`);
             console.log(`  - Scale appliqué: ${scale.toFixed(2)}x`);
-            console.log(`  - Qualité: ${(quality * 100).toFixed(0)}%`);
+            
 
             const form = new FormData();
-            form.append('image', finalBlob, `photo-${Date.now()}.${format === 'image/png' ? 'jpg' : 'png'}`);
+            form.append('image', blob, `photo-${Date.now()}.png`);
             form.append('message', '');
             
             try {
@@ -197,7 +167,7 @@ const uploadCapturedPhoto = () => {
             } catch (e) {
                 reject(e);
             }
-        }, 'image/png', 0.95);
+        }, 'image/png');
     });
 }
 
@@ -301,7 +271,7 @@ const drawCaptionOnCanvas = () => {
         
         // Contour noir
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 2;
         ctx.lineJoin = 'round';
         ctx.miterLimit = 2;
         ctx.strokeText(lines[i], x, y);
