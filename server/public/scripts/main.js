@@ -126,9 +126,8 @@ const uploadCapturedPhoto = () => {
                 
                 // Contour du texte
                 highResCtx.strokeStyle = 'black';
-                highResCtx.lineWidth = 2 * scale;
+                highResCtx.lineWidth = 4 * scale;
                 highResCtx.lineJoin = 'round';
-                highResCtx.miterLimit = 2;
                 highResCtx.strokeText(lines[i], x, y);
                 
                 // Texte blanc
