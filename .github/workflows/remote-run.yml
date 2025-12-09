@@ -4,15 +4,31 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - "server/**"
 
 jobs:
-  run-remote-script:
+  check-changes:
     runs-on: ubuntu-latest
-
+    outputs:
+      src-changed: ${{ steps.filter.outputs.src }}
+      public-changed: ${{ steps.filter.outputs.public }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            src:
+              - 'server/src/**'
+            public:
+              - 'server/public/**'
 
+  restart-server:
+    needs: check-changes
+    if: needs.check-changes.outputs.src-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
       - name: Connect & execute script
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -20,10 +36,30 @@ jobs:
           username: photo-booth
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOST }}    # fortement recommandé
+          known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
           script: |
             set -e
-            echo "Début de l'exécution sur le serveur $(hostname)"
+            echo "Modifications dans server/src/ détectées - Redémarrage du serveur"
             cd photo-booth
             . update.sh
+            echo "Terminé"
+
+  update-public:
+    needs: check-changes
+    if: needs.check-changes.outputs.public-changed == 'true' && needs.check-changes.outputs.src-changed == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect & git pull only
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: nakyss.fr
+          username: photo-booth
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
+          script: |
+            set -e
+            echo "Modifications uniquement dans server/public/ - Git pull seulement"
+            cd photo-booth
+            git pull
             echo "Terminé"
