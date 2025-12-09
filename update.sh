@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git pull
+
 # Vérifier si un screen "photo" existe
 if screen -list | grep -q "\.photo\s"; then
     echo "Un screen 'photo' existe déjà. Arrêt en cours..."
