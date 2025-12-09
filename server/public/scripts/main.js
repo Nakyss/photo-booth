@@ -9,7 +9,7 @@ const cameraOption = document.getElementById('cameraOption')
 const importBtn = document.getElementById('importBtn');
 const importInput = document.getElementById('importInput');
 const inverseBtn = document.getElementById('inverseBtn');
-const retardaterBtn = document.getElementById('timerBtn');
+const timerBtn = document.getElementById('timerBtn');
 let originalImageData = null; // Stocker l'image sans texte
 
 const constraints = {
@@ -153,7 +153,7 @@ const uploadCapturedPhoto = () => {
 
             const form = new FormData();
             form.append('image', blob, `photo-${Date.now()}.png`);
-            form.append('message', '');
+            form.append('message', captionInput.value.trim());
             
             try {
                 const res = await fetch('/upload', {
@@ -177,22 +177,22 @@ photoButton.addEventListener('click', async () => {
     capturePhoto();
 });
 
-retardaterBtn.addEventListener('click', () => {
+timerBtn.addEventListener('click', () => {
     let countdown = 3;
-    retardaterBtn.disabled = true;
-    const originalIcon = retardaterBtn.innerHTML;
+    timerBtn.disabled = true;
+    const originalIcon = timerBtn.innerHTML;
 
-    retardaterBtn.innerHTML = `<span style="font-size: 1.3em;">${countdown}</span>`;
+    timerBtn.innerHTML = `<span style="font-size: 1.3em;">${countdown}</span>`;
     countdown--;
 
     const interval = setInterval(() => {
         if (countdown > 0) {
-            retardaterBtn.innerHTML = `<span style="font-size: 1.3em;">${countdown}</span>`;
+            timerBtn.innerHTML = `<span style="font-size: 1.3em;">${countdown}</span>`;
             countdown--;
         } else {
             clearInterval(interval);
-            retardaterBtn.innerHTML = originalIcon;
-            retardaterBtn.disabled = false;
+            timerBtn.innerHTML = originalIcon;
+            timerBtn.disabled = false;
             capturePhoto();
         }
     }, 1000);
