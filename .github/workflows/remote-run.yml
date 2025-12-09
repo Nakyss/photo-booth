@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  run-remote-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Connect & execute script
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: nakyss.fr
+          username: photo-booth
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOST }}    # fortement recommandé
+          script: |
+            set -e
+            echo "Début de l'exécution sur le serveur $(hostname)"
+            cd photo-booth
+            . update.sh
+            echo "Terminé"
