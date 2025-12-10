@@ -3,9 +3,26 @@
 #include <QDebug>
 #include <QOperatingSystemVersion>
 
-Session::Session(const QUrl &imageUrl, int displayMs, QObject *parent)
-    : QObject(parent), m_url(imageUrl), m_displayMs(displayMs)
+Session::Session(const QUrl &imageUrl, const QString &message,int displayMs, QObject *parent)
+    : QObject(parent), m_url(imageUrl), message(message), m_displayMs(displayMs)
 {
+    speech = new QTextToSpeech();
+
+    //QList<QVoice> voices = speech->availableVoices();
+    //for (qsizetype i = 0; i < voices.size(); ++i) {
+    //    qDebug() << voices.at(i).name();
+    //}
+
+    QList<QVoice> voicesSelected = speech->findVoices("French (France)+UniversalRobot");
+
+    qDebug() << "Nombre de voix precis :" << voicesSelected.size();
+    qDebug() << "Nombre de voix FR :" << speech->findVoices(QLocale("fr-FR")).size();
+    qDebug() << "Nombre de voix:" << speech->availableVoices().size();
+    //speech->setLocale(QLocale("fr-FR"));
+    speech->setRate(-0.25);
+    speech->setPitch(0.6);
+    speech->setVoice(voicesSelected.at(0));
+    qDebug() << voicesSelected.at(0);
 }
 
 Session::~Session()
@@ -15,6 +32,8 @@ Session::~Session()
         delete m_pixmap;
         m_pixmap = nullptr;
     }
+    delete speech;
+    speech = nullptr;
     // m_overlay et m_downloader sont deleteLater() dans la logique
 }
 
@@ -39,7 +58,7 @@ void Session::start()
 void Session::onDownloaded()
 {
     // récupère les données
-    QByteArray data = m_downloader->downloadedData(); // adapte si l'API est différente
+    QByteArray data = m_downloader->downloadedData();
     if (data.isEmpty()) {
         qWarning() << "ImageSession::onDownloaded data vide pour" << m_url;
         emit finished(this);
@@ -66,6 +85,8 @@ void Session::onDownloaded()
 
     // Timer de durée d'affichage : singleShot pour auto-terminer la session
     QTimer::singleShot(m_displayMs, this, &Session::onTimeout);
+
+    speech->say(message);
 }
 
 void Session::onTimeout()
