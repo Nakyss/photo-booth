@@ -8,21 +8,30 @@ Session::Session(const QUrl &imageUrl, const QString &message,int displayMs, QOb
 {
     speech = new QTextToSpeech();
 
-    //QList<QVoice> voices = speech->availableVoices();
-    //for (qsizetype i = 0; i < voices.size(); ++i) {
-    //    qDebug() << voices.at(i).name();
-    //}
+    QVoice voiceSelected;
 
-    QList<QVoice> voicesSelected = speech->findVoices("French (France)");
+    QList<QVoice> bestVoices = speech->findVoices("French (France)");
+    QList<QVoice> frenchVoices = speech->findVoices(QLocale("fr-FR"));
 
-    qDebug() << "Nombre de voix precis :" << voicesSelected.size();
-    qDebug() << "Nombre de voix FR :" << speech->findVoices(QLocale("fr-FR")).size();
+    if (bestVoices.size() == 1){
+        voiceSelected = bestVoices.constFirst();
+    }
+    else if (frenchVoices.size() >= 1){
+        voiceSelected = frenchVoices.constFirst();
+    }
+    else{
+        voiceSelected = speech->availableVoices().constFirst();
+    }
+
+
+    qDebug() << "Nombre de voix precis :" << bestVoices.size();
+    qDebug() << "Nombre de voix FR :" <<frenchVoices.size();
     qDebug() << "Nombre de voix:" << speech->availableVoices().size();
     //speech->setLocale(QLocale("fr-FR"));
     speech->setRate(-0.25);
     speech->setPitch(0.6);
-    speech->setVoice(voicesSelected.at(0));
-    qDebug() << voicesSelected.at(0);
+    speech->setVoice(voiceSelected);
+    qDebug() << voiceSelected;
 }
 
 Session::~Session()
@@ -32,6 +41,7 @@ Session::~Session()
         delete m_pixmap;
         m_pixmap = nullptr;
     }
+    speech->stop();
     delete speech;
     speech = nullptr;
     // m_overlay et m_downloader sont deleteLater() dans la logique
