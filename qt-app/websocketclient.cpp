@@ -93,9 +93,10 @@ void WebSocketClient::onTextMessageReceived(const QString &message)
     if (event == "photo:broadcast") {
         QJsonObject data = obj.value("data").toObject();
         QString image = BASE_URL + data.value("image").toString();
-        // QString messageText = data.value("message").toString();
+        QString messageText = data.value("message").toString();
 
         qDebug() << "Image reçue:" << image;
+        qDebug() << "Message: " << messageText;
         emit imageReceived(image);
     }
 }
