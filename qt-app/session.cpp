@@ -13,7 +13,7 @@ Session::Session(const QUrl &imageUrl, const QString &message,int displayMs, QOb
     //    qDebug() << voices.at(i).name();
     //}
 
-    QList<QVoice> voicesSelected = speech->findVoices("French (France)+UniversalRobot");
+    QList<QVoice> voicesSelected = speech->findVoices("French (France)");
 
     qDebug() << "Nombre de voix precis :" << voicesSelected.size();
     qDebug() << "Nombre de voix FR :" << speech->findVoices(QLocale("fr-FR")).size();
