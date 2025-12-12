@@ -23,7 +23,7 @@
 //#define BASE_URL "https://photo.nakyss.fr/users"
 #define BASE_URL "http://localhost:59875/users"
 
-TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
+TrayManager::TrayManager(PhotoBooth *mainWindow, QObject *parent)
     : QObject(parent),
     trayIcon(nullptr),
     trayMenu(nullptr),
@@ -56,6 +56,9 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
     autostartAction = new QAction(tr("Lancer au démarrage"), this);
     autostartAction->setCheckable(true);
 
+    ttsAction = new QAction(tr("TextToSpeech"), this);
+    ttsAction->setCheckable(true);
+
     clientCountAction = new QAction(tr("Clients connectés : —"), this);
     clientCountAction->setEnabled(false); // juste pour afficher l'info
 
@@ -63,6 +66,7 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
 
     trayMenu->addAction(sendImagesAction);
     trayMenu->addAction(autostartAction);
+    trayMenu->addAction(ttsAction);
     trayMenu->addSeparator();
     trayMenu->addAction(clientCountAction);
     trayMenu->addSeparator();
@@ -75,6 +79,8 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
 
     connect(autostartAction, &QAction::toggled, this, &TrayManager::onToggleAutostart);
 
+    connect(ttsAction, &QAction::toggled, this, &TrayManager::onToggleTTS);
+
     // Ouvre la page https://photo.nakyss.fr dans le navigateur par défaut
     connect(sendImagesAction, &QAction::triggered, this, &TrayManager::onSendImages);
 
@@ -84,6 +90,7 @@ TrayManager::TrayManager(QWidget *mainWindow, QObject *parent)
 
     bool enabled = isAutostartEnabled();
     autostartAction->setChecked(enabled);
+    ttsAction->setChecked(mainWindow->getIsTTSEnabled());
 
     trayIcon->show();
 }
@@ -139,6 +146,13 @@ void TrayManager::onSendImages()
     if (!QDesktopServices::openUrl(url)) {
         qWarning() << "TrayManager: failed to open URL" << url;
     }
+}
+
+void TrayManager::onToggleTTS(bool checked)
+{
+    mainWindow->setIsTTSEnabled(checked);
+    ttsAction->setChecked(checked);
+    qDebug() <<"TTS Enabled:"<< mainWindow->getIsTTSEnabled();
 }
 
 void TrayManager::onToggleAutostart(bool checked)

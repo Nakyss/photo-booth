@@ -3,35 +3,37 @@
 #include <QDebug>
 #include <QOperatingSystemVersion>
 
-Session::Session(const QUrl &imageUrl, const QString &message,int displayMs, QObject *parent)
-    : QObject(parent), m_url(imageUrl), message(message), m_displayMs(displayMs)
+Session::Session(const QUrl &imageUrl, const QString &message, int displayMs, bool hasTTS, QObject *parent)
+    : QObject(parent), m_url(imageUrl), hasTTS(hasTTS), message(message), m_displayMs(displayMs)
 {
-    speech = new QTextToSpeech();
+    if (hasTTS){
+        speech = new QTextToSpeech();
 
-    QVoice voiceSelected;
+        QVoice voiceSelected;
 
-    QList<QVoice> bestVoices = speech->findVoices("French (France)");
-    QList<QVoice> frenchVoices = speech->findVoices(QLocale("fr-FR"));
+        QList<QVoice> bestVoices = speech->findVoices("French (France)+UniversalRobot");
+        QList<QVoice> frenchVoices = speech->findVoices(QLocale("fr-FR"));
 
-    if (bestVoices.size() == 1){
-        voiceSelected = bestVoices.constFirst();
+        if (bestVoices.size() == 1){
+            voiceSelected = bestVoices.constFirst();
+        }
+        else if (frenchVoices.size() >= 1){
+            voiceSelected = frenchVoices.constFirst();
+        }
+        else{
+            voiceSelected = speech->availableVoices().constFirst();
+        }
+
+
+        qDebug() << "Nombre de voix precis :" << bestVoices.size();
+        qDebug() << "Nombre de voix FR :" <<frenchVoices.size();
+        qDebug() << "Nombre de voix:" << speech->availableVoices().size();
+        //speech->setLocale(QLocale("fr-FR"));
+        speech->setRate(-0.25);
+        speech->setPitch(0.6);
+        speech->setVoice(voiceSelected);
+        qDebug() << voiceSelected;
     }
-    else if (frenchVoices.size() >= 1){
-        voiceSelected = frenchVoices.constFirst();
-    }
-    else{
-        voiceSelected = speech->availableVoices().constFirst();
-    }
-
-
-    qDebug() << "Nombre de voix precis :" << bestVoices.size();
-    qDebug() << "Nombre de voix FR :" <<frenchVoices.size();
-    qDebug() << "Nombre de voix:" << speech->availableVoices().size();
-    //speech->setLocale(QLocale("fr-FR"));
-    speech->setRate(-0.25);
-    speech->setPitch(0.6);
-    speech->setVoice(voiceSelected);
-    qDebug() << voiceSelected;
 }
 
 Session::~Session()
@@ -41,9 +43,11 @@ Session::~Session()
         delete m_pixmap;
         m_pixmap = nullptr;
     }
-    speech->stop();
-    delete speech;
-    speech = nullptr;
+    if (hasTTS){
+        speech->stop();
+        delete speech;
+        speech = nullptr;
+    }
     // m_overlay et m_downloader sont deleteLater() dans la logique
 }
 
@@ -96,7 +100,10 @@ void Session::onDownloaded()
     // Timer de durée d'affichage : singleShot pour auto-terminer la session
     QTimer::singleShot(m_displayMs, this, &Session::onTimeout);
 
-    speech->say(message);
+    if (hasTTS){
+        speech->say(message);
+    }
+
 }
 
 void Session::onTimeout()

@@ -14,7 +14,7 @@ class Session : public QObject
 {
     Q_OBJECT
 public:
-    explicit Session(const QUrl &imageUrl, const QString &message, int displayMs = 2500, QObject *parent = nullptr);
+    explicit Session(const QUrl &imageUrl, const QString &message, int displayMs = 2500, bool hasTTS = false, QObject *parent = nullptr);
     ~Session();
 
     void start();
@@ -38,6 +38,7 @@ private:
     QPixmap *m_pixmap = nullptr;
     int m_displayMs;
     QTextToSpeech *speech;
+    bool hasTTS;
 };
 
 #endif // SESSION_H

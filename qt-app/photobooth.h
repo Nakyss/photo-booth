@@ -8,6 +8,8 @@
 #include "session.h"
 #include <QLabel>
 
+class TrayManager;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class PhotoBooth;
@@ -22,6 +24,9 @@ public:
     PhotoBooth(QWidget *parent = nullptr);
     ~PhotoBooth();
 
+    bool getIsTTSEnabled() const;
+    void setIsTTSEnabled(bool newIsTTSEnabled);
+
 private:
     Ui::PhotoBooth *ui;
     WebSocketClient *client;
@@ -31,6 +36,7 @@ private:
     int m_maxConcurrent = 3;               // configurable
     int m_displayMs = 2500;                // configurable durée d'affichage
     QLabel *infoText;
+    bool isTTSEnabled = false;
 
 
 private slots:

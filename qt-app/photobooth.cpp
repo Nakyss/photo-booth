@@ -37,6 +37,16 @@ PhotoBooth::~PhotoBooth()
     //delete button;
 }
 
+bool PhotoBooth::getIsTTSEnabled() const
+{
+    return isTTSEnabled;
+}
+
+void PhotoBooth::setIsTTSEnabled(bool newIsTTSEnabled)
+{
+    isTTSEnabled = newIsTTSEnabled;
+}
+
 
 void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
 {
@@ -52,13 +62,13 @@ void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
         m_sessions.append(s);
         s->start();
     } else {
-        m_pendingQueue.enqueue(QPair(url, message));
+        m_pendingQueue.enqueue(QPair<QUrl, QString>(url, message));
     }
 }
 
 Session* PhotoBooth::createSessionForUrl(const QUrl &url, const QString &message)
 {
-    Session *s = new Session(url, message, m_displayMs, this);
+    Session *s = new Session(url, message, m_displayMs, isTTSEnabled, this);
     connect(s, &Session::finished, this, &PhotoBooth::onSessionFinished, Qt::QueuedConnection);
     return s;
 }
