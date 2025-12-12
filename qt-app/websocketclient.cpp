@@ -1,8 +1,8 @@
 #include "websocketclient.h"
 #include <QDebug>
 
-#define BASE_URL "https://photo.nakyss.fr"
-//#define BASE_URL "http://localhost:59875"
+//#define BASE_URL "https://photo.nakyss.fr"
+#define BASE_URL "http://localhost:59875"
 
 const int PING_INTERVAL_MS = 10000;   // Envoyer un ping toutes les 10 secondes
 const int PONG_TIMEOUT_MS = 3000;     // Attendre le pong max 3 secondes
@@ -39,6 +39,8 @@ WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
     m_pongTimeoutTimer->setSingleShot(true);
     m_pongTimeoutTimer->setInterval(PONG_TIMEOUT_MS);
     connect(m_pongTimeoutTimer, &QTimer::timeout, this, &WebSocketClient::onPongTimeout);
+
+
 
     qDebug() << "Connecting to" << url.toString() << "...";
     m_webSocket.open(m_url);
@@ -97,7 +99,7 @@ void WebSocketClient::onTextMessageReceived(const QString &message)
 
         qDebug() << "Image reçue:" << image;
         qDebug() << "Message: " << messageText;
-        emit imageReceived(image);
+        emit imageReceived(image, messageText);
     }
 }
 
@@ -130,7 +132,4 @@ void WebSocketClient::onError(QAbstractSocket::SocketError error)
     // Cette fonction capture les erreurs réseau (ex: HostNotFoundError, ConnectionRefused)
     // qui ne déclenchent pas toujours immédiatement disconnected()
     qWarning() << "Erreur WebSocket:" << error << m_webSocket.errorString();
-
-    // Généralement, une erreur critique entraînera une fermeture,
-    // donc onDisconnected sera appelé ensuite par Qt.
 }
