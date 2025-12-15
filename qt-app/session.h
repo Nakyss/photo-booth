@@ -8,12 +8,13 @@
 #include "filedownloader.h" // adapte le nom si différent
 #include "overlay.h"
 #include "overlay_mac.h"
+#include <QTextToSpeech>
 
 class Session : public QObject
 {
     Q_OBJECT
 public:
-    explicit Session(const QUrl &imageUrl, int displayMs = 2500, QObject *parent = nullptr);
+    explicit Session(const QUrl &imageUrl, const QString &message, int displayMs = 2500, bool hasTTS = false, QObject *parent = nullptr);
     ~Session();
 
     void start();
@@ -27,6 +28,7 @@ private slots:
 
 private:
     QUrl m_url;
+    QString message;
     FileDownloader *m_downloader = nullptr;
     #ifdef Q_OS_MAC
         OverlayMac *mac_overlay = nullptr;
@@ -35,6 +37,8 @@ private:
     #endif
     QPixmap *m_pixmap = nullptr;
     int m_displayMs;
+    QTextToSpeech *speech;
+    bool hasTTS;
 };
 
 #endif // SESSION_H

@@ -3,9 +3,37 @@
 #include <QDebug>
 #include <QOperatingSystemVersion>
 
-Session::Session(const QUrl &imageUrl, int displayMs, QObject *parent)
-    : QObject(parent), m_url(imageUrl), m_displayMs(displayMs)
+Session::Session(const QUrl &imageUrl, const QString &message, int displayMs, bool hasTTS, QObject *parent)
+    : QObject(parent), m_url(imageUrl), hasTTS(hasTTS), message(message), m_displayMs(displayMs)
 {
+    if (hasTTS){
+        speech = new QTextToSpeech();
+
+        QVoice voiceSelected;
+
+        QList<QVoice> bestVoices = speech->findVoices("French (France)+UniversalRobot");
+        QList<QVoice> frenchVoices = speech->findVoices(QLocale("fr-FR"));
+
+        if (bestVoices.size() == 1){
+            voiceSelected = bestVoices.constFirst();
+        }
+        else if (frenchVoices.size() >= 1){
+            voiceSelected = frenchVoices.constFirst();
+        }
+        else{
+            voiceSelected = speech->availableVoices().constFirst();
+        }
+
+
+        qDebug() << "Nombre de voix precis :" << bestVoices.size();
+        qDebug() << "Nombre de voix FR :" <<frenchVoices.size();
+        qDebug() << "Nombre de voix:" << speech->availableVoices().size();
+        //speech->setLocale(QLocale("fr-FR"));
+        speech->setRate(-0.25);
+        speech->setPitch(0.6);
+        speech->setVoice(voiceSelected);
+        qDebug() << voiceSelected;
+    }
 }
 
 Session::~Session()
@@ -14,6 +42,11 @@ Session::~Session()
     if (m_pixmap) {
         delete m_pixmap;
         m_pixmap = nullptr;
+    }
+    if (hasTTS){
+        speech->stop();
+        delete speech;
+        speech = nullptr;
     }
     // m_overlay et m_downloader sont deleteLater() dans la logique
 }
@@ -39,7 +72,7 @@ void Session::start()
 void Session::onDownloaded()
 {
     // récupère les données
-    QByteArray data = m_downloader->downloadedData(); // adapte si l'API est différente
+    QByteArray data = m_downloader->downloadedData();
     if (data.isEmpty()) {
         qWarning() << "ImageSession::onDownloaded data vide pour" << m_url;
         emit finished(this);
@@ -66,6 +99,11 @@ void Session::onDownloaded()
 
     // Timer de durée d'affichage : singleShot pour auto-terminer la session
     QTimer::singleShot(m_displayMs, this, &Session::onTimeout);
+
+    if (hasTTS){
+        speech->say(message);
+    }
+
 }
 
 void Session::onTimeout()
