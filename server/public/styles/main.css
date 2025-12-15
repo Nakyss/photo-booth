@@ -275,6 +275,7 @@ body.dark .download-btn:hover {
     color: var(--title-color);
     margin-top: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    gap: 10px;
 }
 
 .notification img {
