@@ -57,6 +57,10 @@ export default class AppServer {
             res.sendFile(join(__dirname, '../../public/index.html'));
         });
 
+        this.app.get('/installation_guide', (req, res) => {
+            res.sendFile(join(__dirname, '../../public/installation_guide.html'));
+        });
+
         // POST /upload : accepte un champ `image` (multipart/form-data)
         this.app.post('/upload', upload.single('image'), (req, res) => {
             if (!req.file) {
