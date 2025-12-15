@@ -1,110 +1,127 @@
 <!doctype html>
 <html lang="fr">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width,initial-scale=1" />
-	<title>Guide d'installation — Mon Application</title>
-	<link rel="stylesheet" href="styles/install_guide.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Guide d'installation</title>
+    <link rel="shortcut icon" href="icons/icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="styles/install_guide.css">
 </head>
 <body>
-	<div class="container">
-		<header>
-			<div>
-				<h1>Guide d'installation - Photo-booth</h1>
-				<p class="lead">Choisissez votre système d'exploitation ci-dessous.</p>
-			</div>
-		</header>
-		
-		<div class="card">
-			<div class="tabs" role="tablist" aria-label="Systèmes d'exploitation">
-				<button class="tab active" data-target="windows">Windows</button>
-				<button class="tab" data-target="linux">Linux</button>
-				<button class="tab" data-target="mac">macOS</button>
-			</div>
-			
-			<div class="grid">
-				<main id="content">						
-					<!-- WINDOWS -->
-					<section id="windows" class="os-section">
-						<h2>Windows</h2>
-						<p class="meta">Supporté : Windows 10 et supérieur</p>
+    <h1 class="title">Guide d'installation</h1>
 
-						<a class="dl-button" href="clients/windows/Photo-booth-Release-v0.3.zip">Télécharger</a>
-							
-						<div class="section">
-							<h3>Installation</h3>
-							<p>Téléchargez le fichier<code>.zip</code></p>
-							<p>Extrayez-le dans le dossier de votre choix</p> 
-							<p>Lancez <code>Photo-booth.exe</code></p>
-							<p class="meta"></p>
-						</div>
+    <div class="top-buttons">
+       <a href="/" class="top-btn">Retour à l'accueil</a>
+    </div>
 
-						<div class="section">
-							<h3>Message de sécurité Windows</h3>
-							<p>Au premier lancement, Windows affichera un message de sécurité car l'application n'est pas signée numériquement.</p>
-							<p class="meta">Ce message est normal. L'application est sûre.</p>
-							
-							<p style="margin-left: 2rem; font-weight: 500;">Pour passer ce message :</p>
-							<ol>
-								<li>Cliquez sur <strong>"Informations complémentaires"</strong></li>
-								<li>Puis sur <strong>"Exécuter quand même"</strong></li>
-							</ol>
-							
-						</div>
-							
-					</section>
+    <div class="card">
+       <div class="tabs" role="tablist" aria-label="Systèmes d'exploitation">
+          <button class="tab active" data-target="windows">Windows</button>
+          <button class="tab" data-target="linux">Linux</button>
+          <button class="tab" data-target="mac">macOS</button>
+       </div>
 
-					<!-- LINUX -->
-					<section id="linux" class="os-section" style="display:none">
-						<h2>Linux</h2>
-						<p class="meta">Distribution recommandée : <strong>Ubuntu, Debian ...</strong></p>
+       <div class="grid">
+          <main id="content">
+             <section id="windows" class="os-section">
+                <div class="section-header">
+                   <h2>Windows</h2>
+                   <a class="dl-button" href="clients/windows/Photo-booth-Release-v0.3.zip">
+                      <svg class="btn-icon" viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" /></svg>
+                      Télécharger .zip
+                   </a>
+                </div>
+                <p class="meta">Supporté : Windows 10 et supérieur</p>
 
-						<a class="dl-button" href="clients/linux/Photo-booth-v0.3.zip">Télécharger</a>
-		
-						<div class="section">
-							<h3>Installation</h3>
-							<p>Téléchargez le fichier<code>.zip</code></p>
-							<p>Extrayez-le</p> 
-							<p>Dans un terminal exécuter la commande</p>
-							<pre><code>sudo ./install.sh</code></pre>
-							<p class="meta">Le dossier peut ensuite etre supprimé, mais il est conseillé de garder le fichier <code>uninstall.sh</code></p>
+                <div class="section">
+                   <h3>Installation</h3>
+                   <p>Téléchargez le fichier <code>.zip</code></p>
+                   <p>Extrayez-le dans le dossier de votre choix</p>
+                   <p>Lancez <code>Photo-booth.exe</code></p>
+                </div>
 
-							<p>L'application peut etre lancée depuis le menu des applications ou avec la commande <code>photo-booth</code></p>
-						</div>
+                <div class="section">
+                   <h3>Message de sécurité Windows</h3>
+                   <p>Au premier lancement, Windows affichera un message de sécurité, car l'application n'est pas encore signée.</p>
+                   <p class="meta">L'application est 100% sûre.</p>
 
-					</section>
-						
-					<!-- MAC -->
-					<section id="mac" class="os-section" style="display:none">
-						<h2>macOS</h2>
-						
-						<a class="dl-button" href="clients/mac/Photo-booth-v0.2.zip">Télécharger</a>
+                   <p style="margin-left: 2rem; font-weight: 500; margin-top: 10px;">Pour passer ce message :</p>
+                   <ol>
+                      <li>Cliquez sur <strong>"Informations complémentaires"</strong></li>
+                      <li>Puis sur <strong>"Exécuter quand même"</strong></li>
+                   </ol>
+                </div>
+             </section>
 
-						<p>Demander à Elio ou Nylphen</p>
+             <section id="linux" class="os-section" style="display:none">
+                <div class="section-header">
+                   <h2>Linux</h2>
+                   <a class="dl-button" href="clients/linux/Photo-booth-v0.3.zip">
+                      <svg class="btn-icon" viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" /></svg>
+                      Télécharger
+                   </a>
+                </div>
+                <p class="meta">Distributions supportées : Ubuntu, Debian, Fedora...</p>
 
-					</section>
-	
-				</main>
-			</div>
-		</div>
-	</div>
-		
-	<script>
-		// Tabs simple
-		const tabs = document.querySelectorAll('.tab');
-		const sections = document.querySelectorAll('.os-section');
-		tabs.forEach(t => t.addEventListener('click', () => {
-			tabs.forEach(x=>x.classList.remove('active'));
-			t.classList.add('active');
-			const target = t.dataset.target;
-			sections.forEach(s => s.style.display = s.id === target ? '' : 'none');
-			// focus first heading for accessibility
-			document.querySelector('#'+target+' h2').focus?.();
-		}));
+                <div class="section">
+                   <h3>Installation</h3>
+                   <p>Téléchargez et extrayez l'archive.</p>
+                   <p>Dans un terminal, lancez le script d'installation :</p>
+                   <pre><code>sudo chmod +x install.sh && ./install.sh</code></pre>
+                   <p class="meta">L'application sera ajoutée à votre menu système.</p>
+                </div>
+             </section>
 
-		if (localStorage.getItem("theme") === "dark") {
-			document.body.classList.add("dark");
-		}
-	</script>
+             <section id="mac" class="os-section" style="display:none">
+                <div class="section-header">
+                   <h2>macOS</h2>
+                   <a class="dl-button" href="clients/mac/Photo-booth-v0.2.zip">
+                      <svg class="btn-icon" viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" /></svg>
+                      Télécharger
+                   </a>
+                </div>
+                <p>Demandez à Elio ou Nylphen.</p>
+             </section>
+
+          </main>
+       </div>
+    </div>
+
+    <script>
+       const tabs = document.querySelectorAll('.tab');
+       const sections = document.querySelectorAll('.os-section');
+
+       // Fonction pour changer d'onglet
+       function showOS(targetId) {
+          tabs.forEach(t => {
+             t.classList.toggle('active', t.dataset.target === targetId);
+          });
+          sections.forEach(s => {
+             s.style.display = s.id === targetId ? 'block' : 'none';
+          });
+       }
+
+       // Event listeners sur les clics
+       tabs.forEach(t => t.addEventListener('click', () => {
+          showOS(t.dataset.target);
+       }));
+
+       // --- AUTO-DÉTECTION DE L'OS ---
+       window.addEventListener('DOMContentLoaded', () => {
+          const userAgent = window.navigator.userAgent.toLowerCase();
+          let detectedOS = 'windows'; // par défaut
+
+          if (userAgent.includes('win')) detectedOS = 'windows';
+          else if (userAgent.includes('linux') || userAgent.includes('x11')) detectedOS = 'linux';
+          else if (userAgent.includes('mac')) detectedOS = 'mac';
+
+          showOS(detectedOS);
+       });
+
+       // Thème
+       if (localStorage.getItem("theme") === "dark") {
+          document.body.classList.add("dark");
+       }
+    </script>
 </body>
 </html>
