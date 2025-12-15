@@ -1,5 +1,5 @@
 import { canvas, photoButton, cameraOption, importBtn, importInput, inverseBtn, timerBtn, darkModeToggle, captionInput, video } from "./htmlElement.js";
-import { handleTimer, capturePhoto, setDeviceConstraints, getCameraSelection } from "./camera.js";
+import { handleTimer, capturePhoto, setDeviceConstraints, getCameraSelection, startCamera } from "./camera.js";
 import { showVideo, updateUserCount } from "./documentAction.js";
 import { hideNotification, showNotification } from "./notification.js";
 import { originalImage, drawCaptionOnCanvas, uploadCapturedPhoto, ctx } from "./canva.js";

@@ -4,6 +4,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QT += websockets
 QT += network
+QT += texttospeech
 
 CONFIG += c++17
 

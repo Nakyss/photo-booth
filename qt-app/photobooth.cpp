@@ -2,8 +2,8 @@
 #include <QTimer>
 #include <QUrl>
 
-#define WEBSOCKET_HOST "wss://photo.nakyss.fr"
-//#define WEBSOCKET_HOST "ws://localhost:59875"
+//#define WEBSOCKET_HOST "wss://photo.nakyss.fr"
+#define WEBSOCKET_HOST "ws://localhost:59875"
 
 PhotoBooth::PhotoBooth(QWidget *parent)
     : QMainWindow(parent)
@@ -21,7 +21,7 @@ PhotoBooth::PhotoBooth(QWidget *parent)
 
     // connexion pour recevoir l'URL et démarrer le téléchargement
     connect(client, &WebSocketClient::imageReceived,
-            this, &PhotoBooth::handleImageUrl, Qt::QueuedConnection);
+            this, &PhotoBooth::handlePhotoBooth, Qt::QueuedConnection);
 
     // si WebSocketClient expose connected() et disconnected() :
     connect(client, &WebSocketClient::connected,
@@ -37,28 +37,38 @@ PhotoBooth::~PhotoBooth()
     //delete button;
 }
 
+bool PhotoBooth::getIsTTSEnabled() const
+{
+    return isTTSEnabled;
+}
 
-void PhotoBooth::handleImageUrl(const QString &urlStr)
+void PhotoBooth::setIsTTSEnabled(bool newIsTTSEnabled)
+{
+    isTTSEnabled = newIsTTSEnabled;
+}
+
+
+void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
 {
     QUrl url(urlStr);
     if (!url.isValid()) {
-        qWarning() << "PhotoBooth::handleImageUrl url invalide:" << urlStr;
+        qWarning() << "PhotoBooth::handlePhotoBooth url invalide:" << urlStr;
         return;
     }
 
     // si on peut créer une session maintenant, on le fait, sinon on met en queue
     if (m_sessions.size() < m_maxConcurrent) {
-        Session *s = createSessionForUrl(url);
+        Session *s = createSessionForUrl(url, message);
         m_sessions.append(s);
         s->start();
     } else {
-        m_pendingQueue.enqueue(url);
+        m_pendingQueue.enqueue(QPair<QUrl, QString>(url, message));
     }
 }
 
-Session* PhotoBooth::createSessionForUrl(const QUrl &url)
+Session* PhotoBooth::createSessionForUrl(const QUrl &url, const QString &message)
 {
-    Session *s = new Session(url, m_displayMs, this);
+    Session *s = new Session(url, message, m_displayMs, isTTSEnabled, this);
     connect(s, &Session::finished, this, &PhotoBooth::onSessionFinished, Qt::QueuedConnection);
     return s;
 }
@@ -75,8 +85,8 @@ void PhotoBooth::onSessionFinished(Session* session)
 void PhotoBooth::tryStartNext()
 {
     while (!m_pendingQueue.isEmpty() && m_sessions.size() < m_maxConcurrent) {
-        QUrl next = m_pendingQueue.dequeue();
-        Session *s = createSessionForUrl(next);
+        QPair<QUrl, QString> next = m_pendingQueue.dequeue();
+        Session *s = createSessionForUrl(next.first, next.second);
         m_sessions.append(s);
         s->start();
     }

@@ -5,7 +5,7 @@
 #include <QWebSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QTimer>  // Added for reconnection timer
+#include <QTimer>
 
 class WebSocketClient : public QObject
 {
@@ -17,7 +17,7 @@ public:
 signals:
     void connected();
     void disconnected();
-    void imageReceived(const QString &imageUrl);
+    void imageReceived(const QString &imageUrl, const QString &message);
 
 private slots:
     void onConnected();

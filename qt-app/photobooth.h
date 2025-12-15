@@ -8,6 +8,8 @@
 #include "session.h"
 #include <QLabel>
 
+class TrayManager;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class PhotoBooth;
@@ -22,22 +24,26 @@ public:
     PhotoBooth(QWidget *parent = nullptr);
     ~PhotoBooth();
 
+    bool getIsTTSEnabled() const;
+    void setIsTTSEnabled(bool newIsTTSEnabled);
+
 private:
     Ui::PhotoBooth *ui;
     WebSocketClient *client;
     TrayManager *trayManager;
     QVector<Session*> m_sessions;      // sessions actives
-    QQueue<QUrl> m_pendingQueue;           // file d'attente
+    QQueue<QPair<QUrl, QString>> m_pendingQueue;           // file d'attente
     int m_maxConcurrent = 3;               // configurable
     int m_displayMs = 2500;                // configurable durée d'affichage
     QLabel *infoText;
+    bool isTTSEnabled = false;
 
 
 private slots:
-    void handleImageUrl(const QString &url);
+    void handlePhotoBooth(const QString &url, const QString &message);
     void onSessionFinished(Session* session);
     void tryStartNext();
-    Session* createSessionForUrl(const QUrl &url);
+    Session* createSessionForUrl(const QUrl &url, const QString &message);
 
 };
 #endif // PHOTOBOOTH_H

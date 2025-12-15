@@ -59,6 +59,9 @@ export default class AppServer {
 
         this.app.get('/installation_guide', (req, res) => {
             res.sendFile(join(__dirname, '../../public/installation_guide.html'));
+        
+        this.app.get('/client', (req, res) => {
+            res.sendFile(join(__dirname, '../../public/web-client.html'));
         });
 
         // POST /upload : accepte un champ `image` (multipart/form-data)
