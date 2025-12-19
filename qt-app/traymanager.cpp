@@ -14,14 +14,13 @@
 #include <QCoreApplication>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include "hosts.h"
 
 #ifdef Q_OS_WIN
 #include <QSettings>
 #include <windows.h>
 #endif
 
-//#define BASE_URL "https://photo.nakyss.fr/users"
-#define BASE_URL "http://localhost:59875/users"
 
 TrayManager::TrayManager(PhotoBooth *mainWindow, QObject *parent)
     : QObject(parent),
@@ -31,7 +30,7 @@ TrayManager::TrayManager(PhotoBooth *mainWindow, QObject *parent)
     autostartAction(nullptr),
     clientCountAction(nullptr),
     netManager(nullptr),
-    clientCountApiUrl(QStringLiteral(BASE_URL))
+    clientCountApiUrl(USER_URL)
 {
     // Vérifie la disponibilité du tray
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {

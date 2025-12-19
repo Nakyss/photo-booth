@@ -17,8 +17,8 @@ export default class AppServer {
         this.socketManager = null;
         this.userManager = userManager;
 
-        // TTL en ms (1 minute)
-        this.uploadTtlMs = 60 * 1000;
+        // TTL en ms (15 secondes)
+        this.uploadTtlMs = 15 * 1000;
         this._scheduledDeletions = new Map();
 
         // Middleware

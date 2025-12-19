@@ -1,9 +1,8 @@
 #include "photobooth.h"
 #include <QTimer>
 #include <QUrl>
+#include "hosts.h"
 
-//#define WEBSOCKET_HOST "wss://photo.nakyss.fr"
-#define WEBSOCKET_HOST "ws://localhost:59875"
 
 PhotoBooth::PhotoBooth(QWidget *parent)
     : QMainWindow(parent)
@@ -15,7 +14,7 @@ PhotoBooth::PhotoBooth(QWidget *parent)
     infoText = new QLabel("Il n'y a rien a voir ici, tu peut fermer la fenetre ça reste en arrière plan", this);
     infoText->adjustSize();
 
-    client = new WebSocketClient(QUrl(QStringLiteral(WEBSOCKET_HOST)), this);
+    client = new WebSocketClient(QUrl(WS_URL), this);
 
     trayManager = new TrayManager(this, this);
 

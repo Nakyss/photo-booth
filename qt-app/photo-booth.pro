@@ -24,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     filedownloader.h \
+    hosts.h \
     photobooth.h \
     overlay.h \
     photobooth.h \
