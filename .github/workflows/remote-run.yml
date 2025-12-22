@@ -6,8 +6,14 @@ on:
       - "main"
     paths:
       - "server/**"
+  pull_request: # Ajout du déclencheur pour les PR
+    branches:
+      - "main"
+    paths:
+      - "server/**"
 
 jobs:
+  # Job 1 : Analyse des fichiers modifiés
   check-changes:
     runs-on: ubuntu-latest
     outputs:
@@ -24,9 +30,33 @@ jobs:
             public:
               - 'server/public/**'
 
+  # Job 2 : Linter JS (S'exécute sur PR et Push)
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Ajustez selon votre version
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Run Linter
+        run: npm run lint
+        working-directory: server
+
+  # Job 3 : Déploiement (Redémarrage serveur)
   restart-server:
-    needs: check-changes
-    if: needs.check-changes.outputs.src-changed == 'true'
+    needs: [check-changes, lint-js] # Attend le linter ET le check des changements
+    # Ne s'exécute que si src a changé ET que nous sommes sur la branche main (pas en PR)
+    if: |
+      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main' && 
+      needs.check-changes.outputs.src-changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Connect & execute script
@@ -44,9 +74,15 @@ jobs:
             . update.sh
             echo "Terminé"
 
+  # Job 4 : Déploiement (Update public uniquement)
   update-public:
-    needs: check-changes
-    if: needs.check-changes.outputs.public-changed == 'true' && needs.check-changes.outputs.src-changed == 'false'
+    needs: [check-changes, lint-js]
+    # Ne s'exécute que si seul le public a changé ET que nous sommes sur main
+    if: |
+      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main' && 
+      needs.check-changes.outputs.public-changed == 'true' && 
+      needs.check-changes.outputs.src-changed == 'false'
     runs-on: ubuntu-latest
     steps:
       - name: Connect & git pull only
