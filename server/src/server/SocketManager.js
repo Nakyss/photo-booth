@@ -38,12 +38,12 @@ export default class SocketManager {
                     // Si on reçoit un message, le client est forcément vivant
                     ws.isAlive = true; 
                     
-                    const { event, data } = JSON.parse(msg);
+                    const { event } = JSON.parse(msg);
                     if (event === 'disconnect') {
                         this.handleDisconnect(ws);
                     }
                 } catch (e) {
-                    console.warn('Invalid message:', msg.toString());
+                    console.warn('Invalid message:', msg.toString(), e);
                 }
             });
 
