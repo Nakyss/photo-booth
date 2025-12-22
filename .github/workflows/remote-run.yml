@@ -6,15 +6,15 @@ on:
       - "main"
     paths:
       - "server/**"
-  pull_request: # Ajout du déclencheur pour les PR
-    branches:
-      - "main"
-    paths:
-      - "server/**"
 
 jobs:
-  # Job 1 : Analyse des fichiers modifiés
+  # 1. On appelle le linter défini dans l'autre fichier
+  call-lint:
+    uses: ./.github/workflows/lint.yml
+
+  # 2. Analyse des changements
   check-changes:
+    needs: call-lint # On attend que le lint soit validé
     runs-on: ubuntu-latest
     outputs:
       src-changed: ${{ steps.filter.outputs.src }}
@@ -30,33 +30,10 @@ jobs:
             public:
               - 'server/public/**'
 
-  # Job 2 : Linter JS (S'exécute sur PR et Push)
-  lint-js:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20' # Ajustez selon votre version
-          cache: 'npm'
-          cache-dependency-path: server/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-        working-directory: server
-
-      - name: Run Linter
-        run: npm run lint
-        working-directory: server
-
-  # Job 3 : Déploiement (Redémarrage serveur)
+  # 3. Redémarrage serveur
   restart-server:
-    needs: [check-changes, lint-js] # Attend le linter ET le check des changements
-    # Ne s'exécute que si src a changé ET que nous sommes sur la branche main (pas en PR)
-    if: |
-      github.event_name == 'push' && 
-      github.ref == 'refs/heads/main' && 
-      needs.check-changes.outputs.src-changed == 'true'
+    needs: [call-lint, check-changes]
+    if: needs.check-changes.outputs.src-changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Connect & execute script
@@ -66,36 +43,27 @@ jobs:
           username: photo-booth
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
+          #known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
           script: |
             set -e
-            echo "Modifications dans server/src/ détectées - Redémarrage du serveur"
             cd photo-booth
             . update.sh
-            echo "Terminé"
 
-  # Job 4 : Déploiement (Update public uniquement)
+  # 4. Update public uniquement
   update-public:
-    needs: [check-changes, lint-js]
-    # Ne s'exécute que si seul le public a changé ET que nous sommes sur main
-    if: |
-      github.event_name == 'push' && 
-      github.ref == 'refs/heads/main' && 
-      needs.check-changes.outputs.public-changed == 'true' && 
-      needs.check-changes.outputs.src-changed == 'false'
+    needs: [call-lint, check-changes]
+    if: needs.check-changes.outputs.public-changed == 'true' && needs.check-changes.outputs.src-changed == 'false'
     runs-on: ubuntu-latest
     steps:
-      - name: Connect & git pull only
+      - name: Connect & git pull
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: nakyss.fr
           username: photo-booth
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
+          #known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
           script: |
             set -e
-            echo "Modifications uniquement dans server/public/ - Git pull seulement"
             cd photo-booth
             git pull
-            echo "Terminé"
