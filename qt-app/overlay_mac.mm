@@ -21,17 +21,22 @@ OverlayMac::OverlayMac(QWidget *parent, QPixmap *image)
     setAttribute(Qt::WA_ShowWithoutActivating);
     setAttribute(Qt::WA_TransparentForMouseEvents); // opc
 
-    // Prend toute la taille d’écran
-    QScreen *screen = QGuiApplication::primaryScreen();
-    resize(screen->geometry().size());
-
     // Contenu
     QLabel *label = new QLabel(this);
-    label->setAlignment(Qt::AlignCenter);
-    label->resize(size());
 
-    if (image != nullptr)
-        label->setPixmap(image->scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QSize targetSize = QGuiApplication::primaryScreen()->size();
+    this->resize(targetSize);
+
+    if (image != nullptr) {
+        if (image->size() != targetSize) {
+            label->setPixmap(image->scaled(targetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else {
+            label->setPixmap(*image);
+        }
+    }
+
+    label->setGeometry(0, 0, targetSize.width(), targetSize.height());
+    label->setAlignment(Qt::AlignCenter);
 
 #ifdef Q_OS_MAC
     //

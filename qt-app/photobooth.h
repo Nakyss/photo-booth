@@ -16,7 +16,7 @@ class PhotoBooth;
 }
 QT_END_NAMESPACE
 
-class PhotoBooth : public QMainWindow
+class PhotoBooth : public QWidget
 {
     Q_OBJECT
 

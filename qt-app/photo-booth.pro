@@ -52,3 +52,5 @@ macx {
     OBJECTIVE_SOURCES += overlay_mac.mm
 }
 
+FORMS += \
+    photobooth.ui

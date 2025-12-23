@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     }
 
     PhotoBooth w;
+    //w.show();
     a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

@@ -2,11 +2,11 @@
 #include <QDebug>
 #include "hosts.h"
 
-const int PING_INTERVAL_MS = 10000;   // Envoyer un ping toutes les 10 secondes
+const int PING_INTERVAL_MS = 15000;   // Envoyer un ping toutes les 15 secondes
 const int PONG_TIMEOUT_MS = 3000;     // Attendre le pong max 3 secondes
 
 WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
-    : QObject(parent), m_url(url), m_reconnectAttempts(0), m_maxReconnectAttempts(10)
+    : QObject(parent), m_url(url), m_reconnectAttempts(0), m_maxReconnectAttempts(60)
 {
     connect(&m_webSocket, &QWebSocket::connected,
             this, &WebSocketClient::onConnected);

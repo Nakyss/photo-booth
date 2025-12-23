@@ -13,14 +13,19 @@ Overlay::Overlay(QWidget *parent, QPixmap *image)
 
     QLabel *label = new QLabel(this);
 
-    QScreen *screen = QGuiApplication::primaryScreen();
-    this->resize(screen->size().width(), screen->size().height());
+    QSize targetSize = QGuiApplication::primaryScreen()->size();
+    this->resize(targetSize);
 
-    if (image != nullptr){
-        label->setPixmap(image->scaled(this->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    if (image != nullptr) {
+        if (image->size() != targetSize) {
+            label->setPixmap(image->scaled(targetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else {
+            label->setPixmap(*image);
+        }
     }
+
+    label->setGeometry(0, 0, targetSize.width(), targetSize.height());
     label->setAlignment(Qt::AlignCenter);
-    label->resize(this->size());
 
     this->show();
 

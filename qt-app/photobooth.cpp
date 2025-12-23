@@ -1,18 +1,37 @@
 #include "photobooth.h"
 #include <QTimer>
 #include <QUrl>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QLineEdit>
 #include "hosts.h"
-
+#include "ui_photobooth.h"
 
 PhotoBooth::PhotoBooth(QWidget *parent)
-    : QMainWindow(parent)
+    : QWidget(parent)
+    , ui(new Ui::PhotoBooth)
     , client(nullptr)
     , trayManager(nullptr)
 {
-    this->resize(500,500);
+    ui->setupUi(this);
 
-    infoText = new QLabel("Il n'y a rien a voir ici, tu peut fermer la fenetre ça reste en arrière plan", this);
-    infoText->adjustSize();
+    // this->resize(500,500);
+
+    // infoText = new QLabel("Entrée un ID de groupe");
+
+
+    // Appliquer le layout au widget central (et non à "this")
+    // QGridLayout *grid = new QGridLayout(this);
+
+    // QLineEdit *input = new QLineEdit();
+    // QVBoxLayout *vlayout = new QVBoxLayout();
+
+    // vlayout->addWidget(infoText);
+    // vlayout->addWidget(input);
+    // vlayout->addWidget(new QLabel("jfduishfyusgufuyds"));
+
+
+    // grid->addLayout(vlayout, 0, 0);
 
     client = new WebSocketClient(QUrl(WS_URL), this);
 
@@ -34,6 +53,7 @@ PhotoBooth::PhotoBooth(QWidget *parent)
 PhotoBooth::~PhotoBooth()
 {
     //delete button;
+    delete ui;
 }
 
 bool PhotoBooth::getIsTTSEnabled() const

@@ -118,12 +118,12 @@ void TrayManager::onActivated(QSystemTrayIcon::ActivationReason reason)
 {
     // Clique gauche = toggle show/hide
     if (reason == QSystemTrayIcon::Trigger) {
-       // onShowHide();
+        onShowHide();
     }
     // Clique droit ouvre le menu par défaut (Qt le gère déjà),
     // double-clic pourrait aussi afficher la fenêtre :
     if (reason == QSystemTrayIcon::DoubleClick) {
-        //onShowHide();
+        onShowHide();
     }
 }
 
