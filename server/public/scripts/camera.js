@@ -1,7 +1,7 @@
 import { drawCaptionOnCanvas, setCanvaSize, ctx, setOriginalImage } from "./canva.js";
 import { getCaption } from "./inputs.js";
 import { video, cameraOption, timerBtn } from "./htmlElement.js";
-import { hideVideo } from "./documentAction.js";
+import { hideVideo, setTimerOverlay } from "./documentAction.js";
 
 const constraints = {
     video: true
@@ -59,21 +59,26 @@ const getCameraSelection = async () => {
  * @param {int} duration 
  */
 const handleTimer = (duration) => {
+    const overlay = setTimerOverlay();
     let countdown = duration;
     timerBtn.disabled = true;
     const originalIcon = timerBtn.innerHTML;
 
     timerBtn.innerHTML = `<span style="font-size: 1.3em;">${countdown}</span>`;
+    overlay.innerHTML = `<span>${countdown}</span>`;
+
     countdown--;
 
     const interval = setInterval(() => {
         if (countdown > 0) {
             timerBtn.innerHTML = `<span style="font-size: 1.3em;">${countdown}</span>`;
+            overlay.innerHTML = `<span>${countdown}</span>`;
             countdown--;
         } else {
             clearInterval(interval);
             timerBtn.innerHTML = originalIcon;
             timerBtn.disabled = false;
+            overlay.remove();
             capturePhoto();
         }
     }, 1000);
