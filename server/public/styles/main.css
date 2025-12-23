@@ -167,6 +167,10 @@ body.dark .download-btn:hover {
     animation: spin 0.5s ease-in-out;
 }
 
+.footer {
+    display: none;
+}
+
 /* -----------------------------------------------------
    CENTRAL WRAPPER
 ----------------------------------------------------- */
@@ -313,11 +317,11 @@ body.dark .download-btn:hover {
 
     .center-wrapper {
         margin-top: 20px;
-        width: 90%;
+        width: 100%;
     }
 
-    .video-container {
-        max-width: 300px;
+    #cameraOption {
+        width: 90%;
     }
 
     #caption {
@@ -325,5 +329,17 @@ body.dark .download-btn:hover {
         max-width: 300px;
         font-size: 16px;
         margin: 10px auto;
+    }
+    .header {
+        display: none;
+    }
+    .top-bar {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+    .footer {
+        display: flex;
+        flex-direction: column;
     }
 }
