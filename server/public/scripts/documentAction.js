@@ -27,7 +27,7 @@ const showVideo = () => {
 const updateUserCount = async () => {
     try {
         const res = await fetch('/users');
-        if (!res.ok) throw new Error('Erreur lors de la récupération du nombre d\'utilisateurs');
+        if (!res.ok) console.error("Erreur lors de la récupération du nombre d'utilisateurs");
         const userCount = await res.json();
         const el = document.getElementById('userCount')
         el.textContent = userCount;
@@ -41,4 +41,16 @@ const updateUserCount = async () => {
     }
 };
 
-export { hideVideo, showVideo, updateUserCount };
+/**
+ * Set up a timer overlay on the video element
+ */
+const setTimerOverlay = () => {
+    const timerOverlay = document.createElement('div');
+    timerOverlay.classList.add('timerOverlay');
+    timerOverlay.style.height = video.getBoundingClientRect().height + 'px';
+    timerOverlay.style.width = video.getBoundingClientRect().width + 'px';
+    video.parentElement.insertBefore(timerOverlay, video);
+    return timerOverlay;
+}
+
+export { hideVideo, showVideo, updateUserCount, setTimerOverlay };
