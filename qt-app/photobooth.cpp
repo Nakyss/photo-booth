@@ -33,6 +33,7 @@ void PhotoBooth::displaySettings()
         // On s'assure qu'il se détruit s'il ferme avec la croix
         settingsWindow->setAttribute(Qt::WA_DeleteOnClose);
         settingsWindow->show();
+        settingsWindow->activateWindow();
         qDebug() << "Show settings";
     }
     else {
