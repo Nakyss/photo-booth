@@ -12,8 +12,6 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QCoreApplication>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include "hosts.h"
 
 #ifdef Q_OS_WIN
@@ -22,11 +20,10 @@
 #endif
 
 
-TrayManager::TrayManager(PhotoBooth *mainWindow, QObject *parent)
+TrayManager::TrayManager(bool isTTS, QObject *parent)
     : QObject(parent),
     trayIcon(nullptr),
     trayMenu(nullptr),
-    mainWindow(mainWindow),
     autostartAction(nullptr),
     clientCountAction(nullptr),
     netManager(nullptr),
@@ -89,7 +86,7 @@ TrayManager::TrayManager(PhotoBooth *mainWindow, QObject *parent)
 
     bool enabled = isAutostartEnabled();
     autostartAction->setChecked(enabled);
-    ttsAction->setChecked(mainWindow->getIsTTSEnabled());
+    ttsAction->setChecked(isTTS);
 
     trayIcon->show();
 }
@@ -129,19 +126,19 @@ void TrayManager::onActivated(QSystemTrayIcon::ActivationReason reason)
 
 void TrayManager::onShowHide()
 {
-    if (!mainWindow) return;
+    /*if (!mainWindow) return;
     if (mainWindow->isVisible()) {
         mainWindow->hide();
     } else {
         mainWindow->show();
         mainWindow->raise();          // bring to front
         mainWindow->activateWindow(); // focus
-    }
+    }*/
 }
 
 void TrayManager::onSendImages()
 {
-    QUrl url(QStringLiteral("https://photo.nakyss.fr"));
+    QUrl url(BASE_URL);
     if (!QDesktopServices::openUrl(url)) {
         qWarning() << "TrayManager: failed to open URL" << url;
     }
@@ -149,9 +146,9 @@ void TrayManager::onSendImages()
 
 void TrayManager::onToggleTTS(bool checked)
 {
-    mainWindow->setIsTTSEnabled(checked);
+    emit ttsStatusChanged(checked);
     ttsAction->setChecked(checked);
-    qDebug() <<"TTS Enabled:"<< mainWindow->getIsTTSEnabled();
+    qDebug() <<"TTS Enabled:"<< checked;
 }
 
 void TrayManager::onToggleAutostart(bool checked)
@@ -319,32 +316,27 @@ void TrayManager::setConnected(bool connected)
 {
     if (!trayIcon) return;
 
-    // chemins d'icônes attendus dans le qrc (à adapter si tu as d'autres noms)
-    const QString iconOkPath   = QStringLiteral(":/icons/data/icons/icon.png");
-    const QString iconErrorPath= QStringLiteral(":/icons/data/icons/icon-red.png"); // icône rouge
-
-    QIcon ic;
+    QIcon icone;
+    QString iconPath;
 
     if (connected) {
-        if (QFile::exists(iconOkPath)) {
-            ic = QIcon(iconOkPath);
-        } else {
-            // fallback sur le thème du système
-            ic = QIcon::fromTheme(QStringLiteral("network-transmit-receive"));
-        }
+        iconPath = QStringLiteral(":/icons/data/icons/icon.png");
         trayIcon->setToolTip(tr("PhotoBooth — connecté"));
-    } else {
-        if (QFile::exists(iconErrorPath)) {
-            ic = QIcon(iconErrorPath);
-        } else {
-            // fallback sur le thème du système
-            ic = QIcon::fromTheme(QStringLiteral("network-error"));
-        }
+    }
+    else {
+        iconPath = QStringLiteral(":/icons/data/icons/icon-red.png");
         trayIcon->setToolTip(tr("PhotoBooth — déconnecté"));
     }
 
-    if (!ic.isNull()) {
-        trayIcon->setIcon(ic);
+    if (QFile::exists(iconPath)) {
+        icone = QIcon(iconPath);
+    } else {
+        // fallback sur le thème du système
+        icone = QIcon::fromTheme(QStringLiteral("network-transmit-receive"));
+    }
+
+    if (!icone.isNull()) {
+        trayIcon->setIcon(icone);
     } else {
         qWarning() << "TrayManager::setConnected : aucune icône trouvée pour état" << connected;
     }

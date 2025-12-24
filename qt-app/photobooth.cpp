@@ -1,65 +1,28 @@
 #include "photobooth.h"
 #include <QTimer>
 #include <QUrl>
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QLineEdit>
 #include "hosts.h"
-#include "ui_photobooth.h"
 
-PhotoBooth::PhotoBooth(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::PhotoBooth)
-    , client(nullptr)
-    , trayManager(nullptr)
+PhotoBooth::PhotoBooth()
 {
-    ui->setupUi(this);
+    webSocket = new WebSocketClient(QUrl(WS_URL), this);
 
-    // this->resize(500,500);
+    trayManager = new TrayManager(isTTSEnabled, this);
 
-    // infoText = new QLabel("Entrée un ID de groupe");
+    connect(webSocket, &WebSocketClient::imageReceived, this, &PhotoBooth::handlePhotoBooth, Qt::QueuedConnection);
 
+    connect(webSocket, &WebSocketClient::connected, this, &PhotoBooth::wsConnected, Qt::QueuedConnection);
 
-    // Appliquer le layout au widget central (et non à "this")
-    // QGridLayout *grid = new QGridLayout(this);
+    connect(webSocket, &WebSocketClient::disconnected, this, &PhotoBooth::wsDisconnected, Qt::QueuedConnection);
 
-    // QLineEdit *input = new QLineEdit();
-    // QVBoxLayout *vlayout = new QVBoxLayout();
-
-    // vlayout->addWidget(infoText);
-    // vlayout->addWidget(input);
-    // vlayout->addWidget(new QLabel("jfduishfyusgufuyds"));
-
-
-    // grid->addLayout(vlayout, 0, 0);
-
-    client = new WebSocketClient(QUrl(WS_URL), this);
-
-    trayManager = new TrayManager(this, this);
-
-    // connexion pour recevoir l'URL et démarrer le téléchargement
-    connect(client, &WebSocketClient::imageReceived,
-            this, &PhotoBooth::handlePhotoBooth, Qt::QueuedConnection);
-
-    // si WebSocketClient expose connected() et disconnected() :
-    connect(client, &WebSocketClient::connected,
-            trayManager, [this]() { trayManager->setConnected(true); }, Qt::QueuedConnection);
-
-    connect(client, &WebSocketClient::disconnected,
-            trayManager, [this]() { trayManager->setConnected(false); }, Qt::QueuedConnection);
-
+    connect(trayManager, &TrayManager::ttsStatusChanged, this, &PhotoBooth::setIsTTSEnabled);
 }
 
 PhotoBooth::~PhotoBooth()
 {
-    //delete button;
-    delete ui;
+
 }
 
-bool PhotoBooth::getIsTTSEnabled() const
-{
-    return isTTSEnabled;
-}
 
 void PhotoBooth::setIsTTSEnabled(bool newIsTTSEnabled)
 {
@@ -76,18 +39,18 @@ void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
     }
 
     // si on peut créer une session maintenant, on le fait, sinon on met en queue
-    if (m_sessions.size() < m_maxConcurrent) {
+    if (sessionsList.size() < maxConcurrent) {
         Session *s = createSessionForUrl(url, message);
-        m_sessions.append(s);
+        sessionsList.append(s);
         s->start();
     } else {
-        m_pendingQueue.enqueue(QPair<QUrl, QString>(url, message));
+        pendingQueue.enqueue(QPair<QUrl, QString>(url, message));
     }
 }
 
 Session* PhotoBooth::createSessionForUrl(const QUrl &url, const QString &message)
 {
-    Session *s = new Session(url, message, m_displayMs, isTTSEnabled, this);
+    Session *s = new Session(url, message, displayMs, isTTSEnabled, this);
     connect(s, &Session::finished, this, &PhotoBooth::onSessionFinished, Qt::QueuedConnection);
     return s;
 }
@@ -95,7 +58,7 @@ Session* PhotoBooth::createSessionForUrl(const QUrl &url, const QString &message
 void PhotoBooth::onSessionFinished(Session* session)
 {
     // retire de la liste des sessions actives
-    m_sessions.removeAll(session);
+    sessionsList.removeAll(session);
 
     // démarrer la prochaine de la file si présente
     tryStartNext();
@@ -103,11 +66,21 @@ void PhotoBooth::onSessionFinished(Session* session)
 
 void PhotoBooth::tryStartNext()
 {
-    while (!m_pendingQueue.isEmpty() && m_sessions.size() < m_maxConcurrent) {
-        QPair<QUrl, QString> next = m_pendingQueue.dequeue();
+    while (!pendingQueue.isEmpty() && sessionsList.size() < maxConcurrent) {
+        QPair<QUrl, QString> next = pendingQueue.dequeue();
         Session *s = createSessionForUrl(next.first, next.second);
-        m_sessions.append(s);
+        sessionsList.append(s);
         s->start();
     }
+}
+
+void PhotoBooth::wsConnected()
+{
+    trayManager->setConnected(true);
+}
+
+void PhotoBooth::wsDisconnected()
+{
+    trayManager->setConnected(false);
 }
 

@@ -4,7 +4,7 @@
 #include <QScreen>
 #include <QLabel>
 
-Overlay::Overlay(QWidget *parent, QPixmap *image)
+Overlay::Overlay(QPixmap *image, QWidget *parent)
     : QWidget(parent) {
     setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);

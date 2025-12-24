@@ -8,20 +8,15 @@ const int PONG_TIMEOUT_MS = 3000;     // Attendre le pong max 3 secondes
 WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
     : QObject(parent), m_url(url), m_reconnectAttempts(0), m_maxReconnectAttempts(60)
 {
-    connect(&m_webSocket, &QWebSocket::connected,
-            this, &WebSocketClient::onConnected);
-    connect(&m_webSocket, &QWebSocket::disconnected,
-            this, &WebSocketClient::onDisconnected);
-    connect(&m_webSocket, &QWebSocket::textMessageReceived,
-            this, &WebSocketClient::onTextMessageReceived);  // Moved here to avoid duplicates
+    connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketClient::onConnected);
+    connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketClient::onDisconnected);
+    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketClient::onTextMessageReceived);
 
     // Gestion des erreurs (Important pour détecter les problèmes réseau rapidement)
-    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred),
-            this, &WebSocketClient::onError);
+    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred), this, &WebSocketClient::onError);
 
     // Gestion du Pong (réponse du serveur au Ping)
-    connect(&m_webSocket, &QWebSocket::pong,
-            this, &WebSocketClient::onPong);
+    connect(&m_webSocket, &QWebSocket::pong, this, &WebSocketClient::onPong);
 
     m_reconnectTimer = new QTimer(this);
     m_reconnectTimer->setSingleShot(true);
@@ -37,7 +32,6 @@ WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
     m_pongTimeoutTimer->setSingleShot(true);
     m_pongTimeoutTimer->setInterval(PONG_TIMEOUT_MS);
     connect(m_pongTimeoutTimer, &QTimer::timeout, this, &WebSocketClient::onPongTimeout);
-
 
 
     qDebug() << "Connecting to" << url.toString() << "...";

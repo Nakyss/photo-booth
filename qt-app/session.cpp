@@ -38,17 +38,11 @@ Session::Session(const QUrl &imageUrl, const QString &message, int displayMs, bo
 
 Session::~Session()
 {
-    // les objets parents seront détruits par Qt si parentés ; vérifier si besoin
-    if (m_pixmap) {
-        delete m_pixmap;
-        m_pixmap = nullptr;
-    }
     if (hasTTS){
         speech->stop();
         delete speech;
         speech = nullptr;
     }
-    // m_overlay et m_downloader sont deleteLater() dans la logique
 }
 
 void Session::start()
@@ -94,7 +88,7 @@ void Session::onDownloaded()
     #ifdef Q_OS_MAC
         mac_overlay = new OverlayMac(nullptr, m_pixmap);
     #else
-        m_overlay = new Overlay(nullptr, m_pixmap);
+        m_overlay = new Overlay(m_pixmap);
     #endif
 
     // Timer de durée d'affichage : singleShot pour auto-terminer la session

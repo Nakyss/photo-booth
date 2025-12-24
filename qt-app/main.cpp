@@ -9,8 +9,9 @@ int main(int argc, char *argv[])
         qWarning() << "No system tray available, exiting.";
     }
 
-    PhotoBooth w;
-    //w.show();
     a.setQuitOnLastWindowClosed(false);
+
+    PhotoBooth pb;
+
     return a.exec();
 }
