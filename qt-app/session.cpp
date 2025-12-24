@@ -58,9 +58,6 @@ void Session::start()
     m_downloader = new FileDownloader(m_url, this);
     // FileDownloader émet downloaded() quand terminé — adapte si le signal est différent
     connect(m_downloader, &FileDownloader::downloaded, this, &Session::onDownloaded, Qt::QueuedConnection);
-
-    // Si FileDownloader supporte une erreur signal, connecte-la et gère le fallback
-    // ex: connect(m_downloader, &FileDownloader::errorOccured, this, [...]);
 }
 
 void Session::onDownloaded()

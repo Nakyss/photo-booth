@@ -3,7 +3,7 @@
 #include <QUrl>
 #include "hosts.h"
 
-PhotoBooth::PhotoBooth()
+PhotoBooth::PhotoBooth() : settingsWindow(nullptr)
 {
     webSocket = new WebSocketClient(QUrl(WS_URL), this);
 
@@ -16,11 +16,8 @@ PhotoBooth::PhotoBooth()
     connect(webSocket, &WebSocketClient::disconnected, this, &PhotoBooth::wsDisconnected, Qt::QueuedConnection);
 
     connect(trayManager, &TrayManager::ttsStatusChanged, this, &PhotoBooth::setIsTTSEnabled);
-}
 
-PhotoBooth::~PhotoBooth()
-{
-
+    connect(trayManager, &TrayManager::displayWindow, this, &PhotoBooth::displaySettings);
 }
 
 
@@ -29,6 +26,20 @@ void PhotoBooth::setIsTTSEnabled(bool newIsTTSEnabled)
     isTTSEnabled = newIsTTSEnabled;
 }
 
+void PhotoBooth::displaySettings()
+{
+    if (!settingsWindow) {
+        settingsWindow = new Settings();
+        // On s'assure qu'il se détruit s'il ferme avec la croix
+        settingsWindow->setAttribute(Qt::WA_DeleteOnClose);
+        settingsWindow->show();
+        qDebug() << "Show settings";
+    }
+    else {
+        settingsWindow->deleteLater();
+        qDebug() << "Hide settings";
+    }
+}
 
 void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
 {

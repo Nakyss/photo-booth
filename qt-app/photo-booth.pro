@@ -19,6 +19,7 @@ SOURCES += \
     overlay.cpp \
     photobooth.cpp \
     session.cpp \
+    settings.cpp \
     traymanager.cpp \
     websocketclient.cpp
 
@@ -29,6 +30,7 @@ HEADERS += \
     overlay.h \
     photobooth.h \
     session.h \
+    settings.h \
     traymanager.h \
     websocketclient.h
 
@@ -53,4 +55,4 @@ macx {
 }
 
 FORMS += \
-    photobooth.ui
+    settings.ui

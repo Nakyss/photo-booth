@@ -126,14 +126,7 @@ void TrayManager::onActivated(QSystemTrayIcon::ActivationReason reason)
 
 void TrayManager::onShowHide()
 {
-    /*if (!mainWindow) return;
-    if (mainWindow->isVisible()) {
-        mainWindow->hide();
-    } else {
-        mainWindow->show();
-        mainWindow->raise();          // bring to front
-        mainWindow->activateWindow(); // focus
-    }*/
+    emit displayWindow();
 }
 
 void TrayManager::onSendImages()
