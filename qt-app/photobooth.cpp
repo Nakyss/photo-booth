@@ -29,7 +29,7 @@ void PhotoBooth::setIsTTSEnabled(bool newIsTTSEnabled)
 void PhotoBooth::displaySettings()
 {
     if (!settingsWindow) {
-        settingsWindow = new Settings();
+        settingsWindow = new Settings(webSocket);
         // On s'assure qu'il se détruit s'il ferme avec la croix
         settingsWindow->setAttribute(Qt::WA_DeleteOnClose);
         settingsWindow->show();

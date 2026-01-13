@@ -40,5 +40,6 @@ private slots:
     void setIsTTSEnabled(bool newIsTTSEnabled);
     void displaySettings();
 
+
 };
 #endif // PHOTOBOOTH_H
