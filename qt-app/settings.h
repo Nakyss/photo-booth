@@ -20,6 +20,7 @@ public:
 
 private slots:
     void addRoom();
+    void removeRoom(QString room);
 
 private:
     Ui::Settings *ui;
@@ -29,6 +30,7 @@ private:
     void renderList();
     void clearLayout(QLayout* layout);
     QFile *jsonFile;
+    void saveRooms();
 
 signals:
     void roomChanged(const QVector<QString> *rooms);

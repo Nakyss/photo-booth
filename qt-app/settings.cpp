@@ -70,6 +70,40 @@ void Settings::addRoom()
     roomList->append(room);
     renderList();
 
+    saveRooms();
+}
+
+void Settings::removeRoom(QString room){
+    roomList->removeAll(room);
+    renderList();
+    saveRooms();
+}
+
+QString Settings::getInput()
+{
+    QString text = ui->textInput->text();
+    ui->textInput->clear();
+    return text;
+}
+
+void Settings::clearLayout(QLayout *layout) {
+    if (!layout) return;
+
+    while (QLayoutItem *item = layout->takeAt(0)) {
+        if (QWidget *widget = item->widget()) {
+            widget->deleteLater();
+        }
+
+        else if (QLayout *childLayout = item->layout()) {
+            clearLayout(childLayout);
+        }
+
+        delete item;
+    }
+}
+
+void Settings::saveRooms()
+{
     QJsonArray roomsArray;
     for (const QString &roomName : *roomList) {
         roomsArray.append(roomName);
@@ -89,27 +123,6 @@ void Settings::addRoom()
     }
 }
 
-QString Settings::getInput()
-{
-    QString text = ui->textInput->text();
-    ui->textInput->clear();
-    return text;
-}
-
-void Settings::clearLayout(QLayout* layout)
-{
-    if (!layout) return;
-
-    while (QLayoutItem* item = layout->takeAt(0)) {
-
-        if (QWidget* widget = item->widget()) {
-            widget->deleteLater();
-        }
-
-        delete item;
-    }
-}
-
 void Settings::renderList()
 {
     clearLayout(ui->verticalLayout);
@@ -122,6 +135,10 @@ void Settings::renderList()
 
         hlayout->addWidget(label);
         hlayout->addWidget(button);
+
+        connect(button, &QPushButton::clicked, this, [this, roomName]() {
+            this->removeRoom(roomName);
+        });
 
         ui->verticalLayout->addLayout(hlayout);
     }

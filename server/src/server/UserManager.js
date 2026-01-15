@@ -6,6 +6,7 @@ export default class UserManager {
     addUser(userId) {
         const user = {
             id: userId,
+            rooms: []
         };
 
         this.connectedUsers.set(userId, user);
@@ -20,6 +21,13 @@ export default class UserManager {
         this.connectedUsers.delete(userId);
     }
 
+    setUserRooms(userId, rooms) {
+        const user = this.getUser(userId);
+        if (user) {
+            user.rooms = rooms;
+        }
+        return user;
+    }
 
     getAllUsers() {
         return Array.from(this.connectedUsers.values());

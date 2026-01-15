@@ -51,7 +51,7 @@
         </div>
 
         <!-- Caption input -->
-        <input type="text" id="caption" placeholder="Entrez une légende" maxlength="100">
+        <input type="text" id="caption" class="textInput" placeholder="Entrez une légende" maxlength="100">
 
         <!-- Floating action buttons -->
         <div class="buttons-box" id="capture">
@@ -78,6 +78,20 @@
             <button id="delete" class="floating-button" title="Annuler">
                 <img src="icons/cross-icon.svg" alt="Annuler">
             </button>
+        </div>
+
+        <div class="rooms-container">
+            <div style="display: flex;">
+                <input type="text" id="roomsInput" placeholder="Salles" maxlength="10" class="textInput">
+                <input type="button" id="setRoomsBtn" value="Ajouter" class="add-room-button">
+            </div>
+
+            <div style="color: var(--title-color);">
+                <p>Salles actuelles :</p>
+                <ul id="roomList">
+
+                </ul>
+            </div>
         </div>
     </div>
 

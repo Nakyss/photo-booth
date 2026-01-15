@@ -78,7 +78,7 @@ export default class AppServer {
             this._scheduleDeletion(req.file.filename, fullPath, this.uploadTtlMs);
 
             if (this.socketManager) {
-                this.socketManager.broadcastPhoto(publicPath, req.body.message || '' );
+                this.socketManager.broadcastPhoto(publicPath, req.body.message || '', JSON.parse(req.body.rooms) || []);
             }
 
             return res.json({ path: publicPath });

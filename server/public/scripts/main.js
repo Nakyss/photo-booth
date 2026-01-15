@@ -1,10 +1,11 @@
-import { canvas, photoButton, cameraOption, importBtn, importInput, inverseBtn, timerBtn, darkModeToggle, captionInput, video } from "./htmlElement.js";
+import { canvas, photoButton, cameraOption, importBtn, importInput, inverseBtn, timerBtn, darkModeToggle, captionInput, video, roomList, roomsInput, setRoomsBtn } from "./htmlElement.js";
 import { handleTimer, capturePhoto, setDeviceConstraints, getCameraSelection, startCamera } from "./camera.js";
 import { showVideo, updateUserCount } from "./documentAction.js";
 import { hideNotification, showNotification } from "./notification.js";
 import { originalImage, drawCaptionOnCanvas, uploadCapturedPhoto, ctx } from "./canva.js";
 import { onFileSelected, handlePasteImage, handleDragOver, handleDragLeave, handleDrop } from "./imported.js";
 import { getCaption } from "./inputs.js";
+import { removeRoom, addRoom, loadRooms, renderRoomsList } from "./room.js";
 
 
 // capture button
@@ -74,6 +75,8 @@ document.getElementById('reload').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadRooms();
+    renderRoomsList();
     updateUserCount();
     getCameraSelection();
 });
@@ -101,3 +104,20 @@ document.addEventListener("dragover", handleDragOver);
 document.addEventListener("dragleave", handleDragLeave);
 document.addEventListener("drop", handleDrop);
 
+
+
+setRoomsBtn.addEventListener('click', () => {
+    const input = roomsInput.value.trim();
+    if (input !== '') addRoom(input);
+    else return;
+
+    addRoom(input);
+    roomsInput.value = '';
+    renderRoomsList();
+});
+
+roomsInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        setRoomsBtn.click();
+    }
+});

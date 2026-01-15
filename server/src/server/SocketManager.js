@@ -44,8 +44,7 @@ export default class SocketManager {
                     }
                     if (event === 'room:changed') {
                         const data = JSON.parse(msg).data;
-                        console.log(`User ${ws._id} changed room`);
-                        console.log(data);
+                        console.log("Room Changed : ",this.userManager.setUserRooms(ws._id, data.rooms));
                     }
                 } catch (e) {
                     console.warn('Invalid message:', msg.toString(), e);
@@ -89,14 +88,20 @@ export default class SocketManager {
         }
     }
 
-    broadcastPhoto(img, message = '') {
+    broadcastPhoto(img, message = '', rooms = []) {
         if (!img) return;
         const payload = JSON.stringify({
             event: 'photo:broadcast',
             data: { image: img, message }
         });
-        this.broadcastAll(payload);
-        console.log('New picture sent to clients');
+        if (rooms.length > 0) {
+            this.broadcastToRoom(payload, rooms);
+            console.log('New picture sent to rooms:', rooms);
+        } else {
+            this.broadcastAll(payload);
+            console.log('New picture sent to all');
+        }
+        
     }
 
     broadcastExcept(exclude, event, data) {
@@ -109,6 +114,17 @@ export default class SocketManager {
     broadcastAll(payload) {
         this.wss.clients.forEach(c => {
             if (c.readyState === 1) c.send(payload);
+        });
+    }
+
+    broadcastToRoom(payload, rooms) {
+        const clients = this.userManager.getAllUsers().filter(user => (
+            user.rooms.some(room => rooms.includes(room))
+        ));
+        this.wss.clients.forEach(c => {
+            if (clients.find(user => user.id === c._id)) {
+                if (c.readyState === 1) c.send(payload);
+            }
         });
     }
 }
