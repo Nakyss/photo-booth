@@ -202,10 +202,11 @@ body.dark .download-btn:hover {
 ----------------------------------------------------- */
 .video-container {
     width: 100%;
-    background: #000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background-image: conic-gradient(#eee 25%, white 0 50%, #eee 0 75%, white 0);
+    background-size: 20px 20px;
 }
 
 .video-container video,
