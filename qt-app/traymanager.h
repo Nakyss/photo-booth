@@ -4,18 +4,14 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QMenu>
-#include "photobooth.h"
-
-class PhotoBooth;
-
-class QNetworkAccessManager;
-class QNetworkReply;
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 class TrayManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit TrayManager(PhotoBooth *mainWindow, QObject *parent = nullptr);
+    explicit TrayManager(bool isTTS,QObject *parent = nullptr);
     ~TrayManager();
 
     void show();    // forcer l'affichage de l'icône
@@ -24,7 +20,6 @@ public:
 private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
-    PhotoBooth *mainWindow;
     QAction *autostartAction;
     QAction *clientCountAction;
     QAction *ttsAction;
@@ -32,7 +27,6 @@ private:
     QNetworkAccessManager *netManager;
     QString clientCountApiUrl;
 
-private:
     bool isAutostartEnabled() const;
     bool enableAutostart();
     bool disableAutostart();
@@ -49,6 +43,10 @@ private slots:
 
 public slots:
     void setConnected(bool connected);
+
+signals:
+    void ttsStatusChanged(bool value);
+    void displayWindow();
 };
 
 #endif // TRAYMANAGER_H

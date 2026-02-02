@@ -232,7 +232,7 @@ body.dark .download-btn:hover {
 /* -----------------------------------------------------
    CAPTION INPUT
 ----------------------------------------------------- */
-#caption {
+.textInput {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid var(--light-grey);
@@ -302,6 +302,43 @@ body.dark .download-btn:hover {
     object-fit: cover;
 }
 
+.rooms-container {
+    position: absolute;
+    top: calc(100vh - 60vh);
+    right: 0;
+    width: 250px;
+}
+#roomsInput {
+    width: 80%;
+}
+.add-room-button {
+    padding: 5px;
+    background: var(--bg-color);
+    color: var(--title-color);
+    border: 1px solid var(--light-grey);
+    border-radius: 5px;
+    margin-left: -5px;
+}
+.add-room-button:hover {
+    background-color: var(--notif-color);
+}
+
+#roomList{
+    list-style: none;
+    margin-left: 10px;
+}
+
+#roomList button{
+    border: none;
+    background: none;
+    color: var(--title-color);
+}
+
+#roomList button:hover{
+    color: var(--light-grey);
+    cursor: pointer;
+}
+
 /* -----------------------------------------------------
    RESPONSIVE
 ----------------------------------------------------- */
@@ -337,7 +374,7 @@ body.dark .download-btn:hover {
         width: 90%;
     }
 
-    #caption {
+    .textInput {
         width: 100%;
         max-width: 95%;
         font-size: 16px;

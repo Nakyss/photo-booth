@@ -3,49 +3,44 @@
 #include <QUrl>
 #include "hosts.h"
 
-
-PhotoBooth::PhotoBooth(QWidget *parent)
-    : QMainWindow(parent)
-    , client(nullptr)
-    , trayManager(nullptr)
+PhotoBooth::PhotoBooth() : settingsWindow(nullptr)
 {
-    this->resize(500,500);
+    webSocket = new WebSocketClient(QUrl(WS_URL), this);
 
-    infoText = new QLabel("Il n'y a rien a voir ici, tu peut fermer la fenetre ça reste en arrière plan", this);
-    infoText->adjustSize();
+    trayManager = new TrayManager(isTTSEnabled, this);
 
-    client = new WebSocketClient(QUrl(WS_URL), this);
+    connect(webSocket, &WebSocketClient::imageReceived, this, &PhotoBooth::handlePhotoBooth, Qt::QueuedConnection);
 
-    trayManager = new TrayManager(this, this);
+    connect(webSocket, &WebSocketClient::connected, this, &PhotoBooth::wsConnected, Qt::QueuedConnection);
 
-    // connexion pour recevoir l'URL et démarrer le téléchargement
-    connect(client, &WebSocketClient::imageReceived,
-            this, &PhotoBooth::handlePhotoBooth, Qt::QueuedConnection);
+    connect(webSocket, &WebSocketClient::disconnected, this, &PhotoBooth::wsDisconnected, Qt::QueuedConnection);
 
-    // si WebSocketClient expose connected() et disconnected() :
-    connect(client, &WebSocketClient::connected,
-            trayManager, [this]() { trayManager->setConnected(true); }, Qt::QueuedConnection);
+    connect(trayManager, &TrayManager::ttsStatusChanged, this, &PhotoBooth::setIsTTSEnabled);
 
-    connect(client, &WebSocketClient::disconnected,
-            trayManager, [this]() { trayManager->setConnected(false); }, Qt::QueuedConnection);
-
+    connect(trayManager, &TrayManager::displayWindow, this, &PhotoBooth::displaySettings);
 }
 
-PhotoBooth::~PhotoBooth()
-{
-    //delete button;
-}
-
-bool PhotoBooth::getIsTTSEnabled() const
-{
-    return isTTSEnabled;
-}
 
 void PhotoBooth::setIsTTSEnabled(bool newIsTTSEnabled)
 {
     isTTSEnabled = newIsTTSEnabled;
 }
 
+void PhotoBooth::displaySettings()
+{
+    if (!settingsWindow) {
+        settingsWindow = new Settings(webSocket);
+        // On s'assure qu'il se détruit s'il ferme avec la croix
+        settingsWindow->setAttribute(Qt::WA_DeleteOnClose);
+        settingsWindow->show();
+        settingsWindow->activateWindow();
+        qDebug() << "Show settings";
+    }
+    else {
+        settingsWindow->deleteLater();
+        qDebug() << "Hide settings";
+    }
+}
 
 void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
 {
@@ -56,18 +51,18 @@ void PhotoBooth::handlePhotoBooth(const QString &urlStr, const QString &message)
     }
 
     // si on peut créer une session maintenant, on le fait, sinon on met en queue
-    if (m_sessions.size() < m_maxConcurrent) {
+    if (sessionsList.size() < maxConcurrent) {
         Session *s = createSessionForUrl(url, message);
-        m_sessions.append(s);
+        sessionsList.append(s);
         s->start();
     } else {
-        m_pendingQueue.enqueue(QPair<QUrl, QString>(url, message));
+        pendingQueue.enqueue(QPair<QUrl, QString>(url, message));
     }
 }
 
 Session* PhotoBooth::createSessionForUrl(const QUrl &url, const QString &message)
 {
-    Session *s = new Session(url, message, m_displayMs, isTTSEnabled, this);
+    Session *s = new Session(url, message, displayMs, isTTSEnabled, this);
     connect(s, &Session::finished, this, &PhotoBooth::onSessionFinished, Qt::QueuedConnection);
     return s;
 }
@@ -75,7 +70,7 @@ Session* PhotoBooth::createSessionForUrl(const QUrl &url, const QString &message
 void PhotoBooth::onSessionFinished(Session* session)
 {
     // retire de la liste des sessions actives
-    m_sessions.removeAll(session);
+    sessionsList.removeAll(session);
 
     // démarrer la prochaine de la file si présente
     tryStartNext();
@@ -83,11 +78,21 @@ void PhotoBooth::onSessionFinished(Session* session)
 
 void PhotoBooth::tryStartNext()
 {
-    while (!m_pendingQueue.isEmpty() && m_sessions.size() < m_maxConcurrent) {
-        QPair<QUrl, QString> next = m_pendingQueue.dequeue();
+    while (!pendingQueue.isEmpty() && sessionsList.size() < maxConcurrent) {
+        QPair<QUrl, QString> next = pendingQueue.dequeue();
         Session *s = createSessionForUrl(next.first, next.second);
-        m_sessions.append(s);
+        sessionsList.append(s);
         s->start();
     }
+}
+
+void PhotoBooth::wsConnected()
+{
+    trayManager->setConnected(true);
+}
+
+void PhotoBooth::wsDisconnected()
+{
+    trayManager->setConnected(false);
 }
 

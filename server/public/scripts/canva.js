@@ -1,5 +1,6 @@
 import { canvas } from "./htmlElement.js";
 import { getCaption } from "./inputs.js";
+import { rooms } from "./room.js";
 
 let originalImage = null;
 const ctx = canvas.getContext('2d');
@@ -99,14 +100,10 @@ const uploadCapturedPhoto = () => {
         canvas.toBlob(async (blob) => {
             if (!blob) return reject(new Error('Impossible de créer le blob'));
 
-
-            console.log(`  - Dimensions: ${canvas.width}x${canvas.height}px`);
-            console.log(`  - Taille: ${(blob.size / 1024 ).toFixed(2)} KB / 15 MB`);
-            
-
             const form = new FormData();
             form.append('image', blob, `photo-${Date.now()}.png`);
             form.append('message', getCaption());
+            form.append('rooms', JSON.stringify(rooms));
             
             try {
                 const res = await fetch('/upload', {

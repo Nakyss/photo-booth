@@ -9,7 +9,10 @@ const importInput = document.getElementById('importInput');
 const inverseBtn = document.getElementById('inverseBtn');
 const timerBtn = document.getElementById('timerBtn');
 const captionInput = document.getElementById('caption');
-const darkModeToggle = document.getElementById("checkbox")
+const darkModeToggle = document.getElementById("checkbox");
+const roomsInput = document.getElementById('roomsInput');
+const setRoomsBtn = document.getElementById('setRoomsBtn');
+const roomList = document.getElementById('roomList');
 
 export { 
     canvas, 
@@ -23,5 +26,8 @@ export {
     inverseBtn, 
     timerBtn, 
     captionInput,
-    darkModeToggle
+    darkModeToggle,
+    roomsInput,
+    setRoomsBtn,
+    roomList
 };
