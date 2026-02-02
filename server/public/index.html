@@ -13,11 +13,13 @@
 </head>
 
 <body>
-    <!-- Title + Download -->
+    <!-- Title -->
+    <h1 class="title">Photo-booth</h1>
+ 
+    <!-- Download + Client -->
     <div class="header">
-        <h1 class="title">Photo-booth</h1>
-        <a href="/installation_guide" class="download-btn">Télécharger le client</a>
-        <a href="/client" class="download-btn">Client en ligne</a>
+        <a href="/installation_guide" class="top-btn">Télécharger le client</a>
+        <a href="/client" class="top-btn">Client en ligne</a>
     </div>
 
     <!-- Top bar -->
@@ -56,7 +58,7 @@
         </div>
 
         <!-- Caption input -->
-        <input type="text" id="caption" placeholder="Entrez une légende" maxlength="100">
+        <input type="text" id="caption" class="textInput" placeholder="Entrez une légende" maxlength="100">
 
         <!-- Floating action buttons -->
         <div class="buttons-box" id="capture">
@@ -84,11 +86,24 @@
                 <img src="icons/cross-icon.svg" alt="Annuler">
             </button>
         </div>
+
+        <div class="rooms-container">
+            <div style="display: flex;">
+                <input type="text" id="roomsInput" placeholder="Salles" maxlength="10" class="textInput">
+                <input type="button" id="setRoomsBtn" value="Ajouter" class="add-room-button">
+            </div>
+
+            <div style="color: var(--title-color);">
+                <p>Salles actuelles :</p>
+                <ul id="roomList">
+
+                </ul>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
-        <a href="/client" class="download-btn">Client en ligne</a>
-        <a href="/installation_guide" class="download-btn">Télécharger le client</a>
+        <a href="/client" class="top-btn">Client en ligne</a>
     </div>
 
     <!-- Notifications -->
