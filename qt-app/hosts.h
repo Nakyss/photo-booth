@@ -3,8 +3,8 @@
 #include <QString>
 
 
-// QString HOST = "photo.nakyss.fr"
-const QString HOST = "localhost:59875";
+const QString HOST = "photo.nakyss.fr";
+//const QString HOST = "localhost:59875";
 
 const QString WS_URL = "ws://" + HOST;
 
