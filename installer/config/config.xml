@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Photo-Booth</Name>
+    <Version>1.0.0</Version>
+    <Title>Installateur de Photo-Booth</Title>
+    <Publisher>Nakyss</Publisher>
+    <TargetDir>@ApplicationsDir@/PhotoBooth</TargetDir>
+
+    <RemoteRepositories>
+        <Repository>
+            <Url>https://photo.nakyss.fr/updates/linux/</Url>
+            <Enabled>1</Enabled>
+            <DisplayName>Dépôt Officiel</DisplayName>
+        </Repository>
+    </RemoteRepositories>
+</Installer>
