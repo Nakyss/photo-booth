@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Photo-booth
+Exec=Photo-booth
+Icon=Photo-booth
+Type=Application
+Categories=Utility;Graphics;
+Terminal=false
+X-AppImage-Version=9dbc819
+
