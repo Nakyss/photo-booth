@@ -15,29 +15,31 @@
 <body>
     <!-- Title -->
     <h1 class="title">Photo-booth</h1>
-
-    <!-- Top buttons -->
-    <div class="top-buttons">
+ 
+    <!-- Download + Client -->
+    <div class="header">
         <a href="/installation_guide" class="top-btn">Télécharger le client</a>
         <a href="/client" class="top-btn">Client en ligne</a>
     </div>
 
     <!-- Top bar -->
-    <div class="infos">
-        <div class="checkbox-container">
-            <input type="checkbox" class="checkbox" id="checkbox">
-            <label for="checkbox" class="checkbox-label">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun"></i>
-                <span class="ball"></span>
-            </label>
+    <div class="top-bar">
+        <div class="infos">
+            <div class="checkbox-container">
+                <input type="checkbox" class="checkbox" id="checkbox">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <span class="ball"></span>
+                </label>
+            </div>
         </div>
-    </div>
 
-    <!-- User count (absolute top right) -->
-    <div class="user-count">
-        <p>Clients connectés : <span id="userCount" style="color: red;">0</span></p>
-        <button id="reload"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+        <!-- User count (absolute top right) -->
+        <div class="user-count">
+            <p>Clients connectés : <span id="userCount" style="color: red;">0</span></p>
+            <button id="reload"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+        </div>
     </div>
 
     <!-- CENTRAL WRAPPER -->
@@ -50,12 +52,13 @@
 
         <!-- Video preview -->
         <div class="video-container">
+
             <video id="cameraStream" autoplay playsinline></video>
             <canvas id="photoCanvas" class="hidden"></canvas>
         </div>
 
         <!-- Caption input -->
-        <input type="text" id="caption" placeholder="Entrez une légende" maxlength="100">
+        <input type="text" id="caption" class="textInput" placeholder="Entrez une légende" maxlength="100">
 
         <!-- Floating action buttons -->
         <div class="buttons-box" id="capture">
@@ -83,6 +86,25 @@
                 <img src="icons/cross-icon.svg" alt="Annuler">
             </button>
         </div>
+
+        <div class="rooms-container">
+            <div style="display: flex;">
+                <input type="text" id="roomsInput" placeholder="Salles" maxlength="10" class="textInput">
+                <input type="button" id="setRoomsBtn" value="Ajouter" class="add-room-button">
+            </div>
+
+            <div style="color: var(--title-color);">
+                <p>Salles actuelles :</p>
+                <ul id="roomList">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="/client" class="download-btn">Client en ligne</a>
+        <a href="/installation_guide" class="download-btn">Télécharger le client</a>
     </div>
 
     <!-- Notifications -->

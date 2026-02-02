@@ -1,29 +1,26 @@
 #include "websocketclient.h"
 #include <QDebug>
+#include <QJsonArray>
+#include "hosts.h"
+#include <QFile>
+#include <QStandardPaths>
+#include <QDir>
 
-//#define BASE_URL "https://photo.nakyss.fr"
-#define BASE_URL "http://localhost:59875"
-
-const int PING_INTERVAL_MS = 10000;   // Envoyer un ping toutes les 10 secondes
+const int PING_INTERVAL_MS = 15000;   // Envoyer un ping toutes les 15 secondes
 const int PONG_TIMEOUT_MS = 3000;     // Attendre le pong max 3 secondes
 
 WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
-    : QObject(parent), m_url(url), m_reconnectAttempts(0), m_maxReconnectAttempts(10)
+    : QObject(parent), m_url(url), m_reconnectAttempts(0), m_maxReconnectAttempts(60)
 {
-    connect(&m_webSocket, &QWebSocket::connected,
-            this, &WebSocketClient::onConnected);
-    connect(&m_webSocket, &QWebSocket::disconnected,
-            this, &WebSocketClient::onDisconnected);
-    connect(&m_webSocket, &QWebSocket::textMessageReceived,
-            this, &WebSocketClient::onTextMessageReceived);  // Moved here to avoid duplicates
+    connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketClient::onConnected);
+    connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketClient::onDisconnected);
+    connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketClient::onTextMessageReceived);
 
     // Gestion des erreurs (Important pour détecter les problèmes réseau rapidement)
-    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred),
-            this, &WebSocketClient::onError);
+    connect(&m_webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::errorOccurred), this, &WebSocketClient::onError);
 
     // Gestion du Pong (réponse du serveur au Ping)
-    connect(&m_webSocket, &QWebSocket::pong,
-            this, &WebSocketClient::onPong);
+    connect(&m_webSocket, &QWebSocket::pong, this, &WebSocketClient::onPong);
 
     m_reconnectTimer = new QTimer(this);
     m_reconnectTimer->setSingleShot(true);
@@ -41,7 +38,6 @@ WebSocketClient::WebSocketClient(const QUrl &url, QObject *parent)
     connect(m_pongTimeoutTimer, &QTimer::timeout, this, &WebSocketClient::onPongTimeout);
 
 
-
     qDebug() << "Connecting to" << url.toString() << "...";
     m_webSocket.open(m_url);
 }
@@ -50,9 +46,40 @@ void WebSocketClient::onConnected()
 {
     qDebug() << "Connected to" << m_url.toString();
     m_reconnectAttempts = 0;
-
     m_pingTimer->start();
     emit connected();
+
+    QString folderPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QString filePath = folderPath + "/rooms.json";
+
+    QDir dir(folderPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    QFile jsonFile(filePath);
+    if (jsonFile.open(QIODevice::ReadOnly))
+    {
+        QByteArray bytes = jsonFile.readAll();
+        jsonFile.close();
+
+        QJsonParseError JsonError;
+        QJsonDocument document = QJsonDocument::fromJson(bytes, &JsonError);
+        if (JsonError.error != QJsonParseError::NoError){
+            qDebug() << "Erreur de parsing JSON :" << JsonError.errorString();
+            qDebug() << "Erreur à l'offset (position) :" << JsonError.offset;
+
+            // Affiche le texte autour de l'erreur pour comprendre où ça coince
+            int errorPos = JsonError.offset;
+            qDebug() << "Extrait proche de l'erreur :" << bytes.mid(qMax(0, errorPos - 10), 20);
+            return;
+        }
+
+        if (document.isArray()) {
+            QJsonArray array = document.array();
+            sendRooms(array);
+        }
+    }
 }
 
 void WebSocketClient::sendPing()
@@ -132,4 +159,21 @@ void WebSocketClient::onError(QAbstractSocket::SocketError error)
     // Cette fonction capture les erreurs réseau (ex: HostNotFoundError, ConnectionRefused)
     // qui ne déclenchent pas toujours immédiatement disconnected()
     qWarning() << "Erreur WebSocket:" << error << m_webSocket.errorString();
+}
+
+void WebSocketClient::sendRooms(QJsonArray rooms)
+{
+    QJsonObject data;
+    data.insert("rooms", rooms);
+
+    QJsonObject json;
+    json.insert("event", "room:changed");
+    json.insert("data", data);
+
+    QJsonDocument doc(json);
+    QString message = doc.toJson(QJsonDocument::Compact);
+
+    if (m_webSocket.isValid()) {
+        m_webSocket.sendTextMessage(message);
+    }
 }

@@ -173,6 +173,10 @@ body.dark .top-btn:hover {
     animation: spin 0.5s ease-in-out;
 }
 
+.footer {
+    display: none;
+}
+
 /* -----------------------------------------------------
    CENTRAL WRAPPER
 ----------------------------------------------------- */
@@ -182,7 +186,7 @@ body.dark .top-btn:hover {
     align-items: center;
     width: 100%;
     max-width: 500px;
-    margin-top: 180px;
+    margin-top: 65px;
     gap: 20px;
 }
 
@@ -204,10 +208,11 @@ body.dark .top-btn:hover {
 ----------------------------------------------------- */
 .video-container {
     width: 100%;
-    background: #000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    background-image: conic-gradient(#eee 25%, white 0 50%, #eee 0 75%, white 0);
+    background-size: 20px 20px;
 }
 
 .video-container video,
@@ -218,10 +223,22 @@ body.dark .top-btn:hover {
 
 .inversed { transform: scaleX(-1); }
 
+.timerOverlay {
+    background: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 5rem;
+    font-weight: bold;
+}
+
 /* -----------------------------------------------------
    CAPTION INPUT
 ----------------------------------------------------- */
-#caption {
+.textInput {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid var(--light-grey);
@@ -281,6 +298,7 @@ body.dark .top-btn:hover {
     color: var(--title-color);
     margin-top: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    gap: 10px;
 }
 
 .notification img {
@@ -288,6 +306,43 @@ body.dark .top-btn:hover {
     height: 40px;
     border-radius: 5px;
     object-fit: cover;
+}
+
+.rooms-container {
+    position: absolute;
+    top: calc(100vh - 60vh);
+    right: 0;
+    width: 250px;
+}
+#roomsInput {
+    width: 80%;
+}
+.add-room-button {
+    padding: 5px;
+    background: var(--bg-color);
+    color: var(--title-color);
+    border: 1px solid var(--light-grey);
+    border-radius: 5px;
+    margin-left: -5px;
+}
+.add-room-button:hover {
+    background-color: var(--notif-color);
+}
+
+#roomList{
+    list-style: none;
+    margin-left: 10px;
+}
+
+#roomList button{
+    border: none;
+    background: none;
+    color: var(--title-color);
+}
+
+#roomList button:hover{
+    color: var(--light-grey);
+    cursor: pointer;
 }
 
 /* -----------------------------------------------------
@@ -318,17 +373,29 @@ body.dark .top-btn:hover {
 
     .center-wrapper {
         margin-top: 20px;
+        width: 100%;
+    }
+
+    #cameraOption {
         width: 90%;
     }
 
-    .video-container {
-        max-width: 300px;
-    }
-
-    #caption {
+    .textInput {
         width: 100%;
-        max-width: 300px;
+        max-width: 95%;
         font-size: 16px;
         margin: 10px auto;
+    }
+    .header {
+        display: none;
+    }
+    .top-bar {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+    .footer {
+        display: flex;
+        flex-direction: column;
     }
 }

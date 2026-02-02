@@ -9,7 +9,7 @@ class Overlay : public QWidget {
     Q_OBJECT
 
 public:
-    explicit Overlay(QWidget *parent = nullptr, QPixmap *image = nullptr);
+    explicit Overlay(QPixmap *image, QWidget *parent = nullptr);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

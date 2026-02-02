@@ -13,6 +13,7 @@ class WebSocketClient : public QObject
 
 public:
     explicit WebSocketClient(const QUrl &url, QObject *parent = nullptr);
+    void sendRooms(QJsonArray rooms);
 
 signals:
     void connected();

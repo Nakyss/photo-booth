@@ -19,15 +19,18 @@ SOURCES += \
     overlay.cpp \
     photobooth.cpp \
     session.cpp \
+    settings.cpp \
     traymanager.cpp \
     websocketclient.cpp
 
 HEADERS += \
     filedownloader.h \
+    hosts.h \
     photobooth.h \
     overlay.h \
     photobooth.h \
     session.h \
+    settings.h \
     traymanager.h \
     websocketclient.h
 
@@ -51,3 +54,5 @@ macx {
     OBJECTIVE_SOURCES += overlay_mac.mm
 }
 
+FORMS += \
+    settings.ui

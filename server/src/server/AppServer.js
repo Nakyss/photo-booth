@@ -17,8 +17,8 @@ export default class AppServer {
         this.socketManager = null;
         this.userManager = userManager;
 
-        // TTL en ms (1 minute)
-        this.uploadTtlMs = 60 * 1000;
+        // TTL en ms (15 secondes)
+        this.uploadTtlMs = 15 * 1000;
         this._scheduledDeletions = new Map();
 
         // Middleware
@@ -49,7 +49,7 @@ export default class AppServer {
 
         const upload = multer({
             storage,
-            limits: { fileSize: 15 * 1024 * 1024 } // 15MB limit
+            limits: { fileSize: 3 * 1024 * 1024 } // 3MB limit
         });
 
         // Routes
@@ -78,7 +78,7 @@ export default class AppServer {
             this._scheduleDeletion(req.file.filename, fullPath, this.uploadTtlMs);
 
             if (this.socketManager) {
-                this.socketManager.broadcastPhoto(publicPath, req.body.message || '' );
+                this.socketManager.broadcastPhoto(publicPath, req.body.message || '', JSON.parse(req.body.rooms) || []);
             }
 
             return res.json({ path: publicPath });
