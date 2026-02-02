@@ -5,9 +5,12 @@
 #include <QUrl>
 #include <QTimer>
 #include <QPixmap>
-#include "filedownloader.h" // adapte le nom si différent
-#include "overlay.h"
-#include "overlay_mac.h"
+#include "filedownloader.h"
+#ifdef Q_OS_MAC
+    #include "overlay_mac.h"
+#else
+    #include "overlay.h"
+#endif
 #include <QTextToSpeech>
 
 class Session : public QObject
