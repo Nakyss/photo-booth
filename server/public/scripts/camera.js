@@ -7,16 +7,31 @@ const constraints = {
     video: true
 };
 
+let currentConstraints = constraints;
+
 /**
  * Start the camera with the given constraints, containing the device ID.
  * @param {Object} constraints 
  */
 const startCamera = async (constraints) =>{
     try {
+        currentConstraints = constraints;
         video.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
     } catch (err) {
         console.error("Erreur d'accès à la caméra:", err);
         alert("Impossible d'accéder à la caméra.");
+    }
+}
+
+/**
+ * Stop the camera by stopping all video tracks
+ */
+const stopCamera = () => {
+    if (video.srcObject) {
+        const stream = video.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        video.srcObject = null;
     }
 }
 
@@ -99,5 +114,23 @@ const setDeviceConstraints = (deviceId) => {
         }
     };
 }
+
+/**
+ * Handle page visibility changes to stop/start camera
+ */
+const handleVisibilityChange = () => {
+    if (document.hidden) {
+        // L'onglet n'est plus visible, arrêter la caméra
+        stopCamera();
+    } else {
+        // L'onglet est de nouveau visible, redémarrer la caméra
+        if (currentConstraints) {
+            startCamera(currentConstraints);
+        }
+    }
+}
+
+// Écouter les changements de visibilité de la page
+document.addEventListener('visibilitychange', handleVisibilityChange);
 
 export { startCamera, capturePhoto, getCameraSelection, handleTimer, setDeviceConstraints };
