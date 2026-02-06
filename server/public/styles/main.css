@@ -198,9 +198,9 @@ body.dark .top-btn:hover {
     height: 38px;
     padding: 5px 12px;
     background: var(--light-grey);
-    border: 2px solid var(--title-color);
-    border-radius: 25px;
+    border: none;
     color: var(--title-color);
+    border-radius: 6px;
 }
 
 /* -----------------------------------------------------
@@ -310,9 +310,9 @@ body.dark .top-btn:hover {
 
 .rooms-container {
     position: absolute;
-    top: calc(100vh - 60vh);
-    right: 0;
-    width: 250px;
+    top: calc(100vh - 65vh);
+    left: 0;
+    width: 300px;
 }
 #roomsInput {
     width: 80%;
