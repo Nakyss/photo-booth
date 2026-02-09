@@ -25,8 +25,6 @@ export default class AppServer {
         this.app.use(cors());
         this.app.use(express.json());
 
-        // Serve the public directory
-        this.app.use(express.static(join(__dirname, '../../public')));
 
         // Ensure uploads directory exists
         this.uploadsDir = join(__dirname, '../../public/uploads');
@@ -97,6 +95,9 @@ export default class AppServer {
             const users = this.userManager.getUserCount();
             res.json(users);
         });
+
+        // Serve the public directory
+        this.app.use(express.static(join(__dirname, '../../public')));
     }
 
     _logAccess(req, route) {
