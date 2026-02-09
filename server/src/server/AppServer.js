@@ -54,7 +54,7 @@ export default class AppServer {
 
         const upload = multer({
             storage,
-            limits: { fileSize: 3 * 1024 * 1024 } // 3MB limit
+            limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
         });
 
         // Routes
