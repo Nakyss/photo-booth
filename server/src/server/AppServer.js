@@ -33,13 +33,6 @@ export default class AppServer {
             fs.mkdirSync(uploadsDir, { recursive: true });
         }
 
-        // Ensure logs directory exists
-        this.logsDir = join(__dirname, '../../logs');
-        if (!fs.existsSync(this.logsDir)) {
-            fs.mkdirSync(this.logsDir, { recursive: true });
-        }
-        this.accessLogPath = join(this.logsDir, 'access.log');
-
         this._cleanupAndScheduleExisting();
 
         // Multer storage
@@ -59,12 +52,10 @@ export default class AppServer {
 
         // Routes
         this.app.get('/', (req, res) => {
-            this._logAccess(req, '/');
             res.sendFile(join(__dirname, '../../public/index.html'));
         });
 
         this.app.get('/installation_guide', (req, res) => {
-            this._logAccess(req, '/installation_guide');
             res.sendFile(join(__dirname, '../../public/installation_guide.html'));
         });
         
@@ -100,16 +91,6 @@ export default class AppServer {
         this.app.use(express.static(join(__dirname, '../../public')));
     }
 
-    _logAccess(req, route) {
-        const timestamp = new Date().toISOString();
-        const forwarded = req.headers['x-forwarded-for'];
-        const ip = (Array.isArray(forwarded) ? forwarded[0] : (forwarded || ''))
-            .split(',')[0].trim() || req.socket?.remoteAddress || req.ip || 'unknown';
-        const line = `${timestamp} ${route} ${ip}\n`;
-        fs.appendFile(this.accessLogPath, line, (err) => {
-            if (err) console.warn('Erreur ecriture log acces:', err.message);
-        });
-    }
 
     setSocketManager(socketManager) {
         this.socketManager = socketManager;
