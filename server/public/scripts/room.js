@@ -1,4 +1,4 @@
-import { roomList, roomsInput } from "./htmlElement.js";
+import { roomList } from "./htmlElement.js";
 
 let rooms = [];
 

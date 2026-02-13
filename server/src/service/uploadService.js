@@ -1,47 +1,28 @@
-import express from 'express';
-import cors from 'cors';
-import http from 'http';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import fs from 'fs';
-import multer from 'multer';
+import { dirname, join } from 'path';
+import {fileURLToPath} from "url";
+import multer from "multer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-
-export default class AppServer {
-    constructor(userManager) {
-        this.app = express();
-        this.server = http.createServer(this.app);
-        this.socketManager = null;
-        this.userManager = userManager;
-
-        // TTL en ms (15 secondes)
+export default class uploadService{
+    constructor() {
         this.uploadTtlMs = 15 * 1000;
         this._scheduledDeletions = new Map();
 
-        // Middleware
-        this.app.use(cors());
-        this.app.use(express.json());
-
-        // Serve the public directory
-        this.app.use(express.static(join(__dirname, '../../public')));
-
         // Ensure uploads directory exists
         this.uploadsDir = join(__dirname, '../../public/uploads');
-        const uploadsDir = join(__dirname, '../../public/uploads');
-        if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
+        if (!fs.existsSync(this.uploadsDir)) {
+            fs.mkdirSync(this.uploadsDir, { recursive: true });
         }
 
         this._cleanupAndScheduleExisting();
 
         // Multer storage
         const storage = multer.diskStorage({
-            destination: uploadsDir,
+            destination: this.uploadsDir,
             filename: (req, file, cb) => {
-                // simple filename sanitization
                 const safeName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9.\-_]/g, '');
                 cb(null, `${Date.now()}-${safeName}`);
             }
@@ -52,57 +33,9 @@ export default class AppServer {
             limits: { fileSize: 3 * 1024 * 1024 } // 3MB limit
         });
 
-        // Routes
-        this.app.get('/', (req, res) => {
-            res.sendFile(join(__dirname, '../../public/index.html'));
-        });
-
-        this.app.get('/installation_guide', (req, res) => {
-            res.sendFile(join(__dirname, '../../public/installation_guide.html'));
-        });
-        
-        this.app.get('/client', (req, res) => {
-            res.sendFile(join(__dirname, '../../public/web-client.html'));
-        });
-
-        // POST /upload : accepte un champ `image` (multipart/form-data)
-        this.app.post('/upload', upload.single('image'), (req, res) => {
-            if (!req.file) {
-                return res.status(400).json({ error: 'No file uploaded' });
-            }
-
-            const publicPath = `/uploads/${req.file.filename}`;
-            const fullPath = join(this.uploadsDir, req.file.filename);
-
-            // Schedule deletion after TTL
-            this._scheduleDeletion(req.file.filename, fullPath, this.uploadTtlMs);
-
-            if (this.socketManager) {
-                this.socketManager.broadcastPhoto(publicPath, req.body.message || '', JSON.parse(req.body.rooms) || []);
-            }
-
-            return res.json({ path: publicPath });
-        });
-
-        this.app.get('/users', (req, res) => {
-            const users = this.userManager.getUserCount();
-            res.json(users);
-        });
-    }
-
-    setSocketManager(socketManager) {
-        this.socketManager = socketManager;
-    }
-
-
-    /**
-     * Start listening on a port
-     * @param {number} port - port number to bind the server to
-     */
-    start(port = 3000) {
-        this.server.listen(port, () => {
-            console.log(`Server running on http://localhost:${port}`);
-        });
+         this.getUpload = () => {
+            return upload;
+        }
     }
 
     _scheduleDeletion(filename, fullPath, delayMs) {
@@ -157,5 +90,14 @@ export default class AppServer {
         } catch (e) {
             console.warn('Erreur lors du nettoyage des uploads au démarrage:', e.message);
         }
+    }
+
+    registerImage = (filename) => {
+        const publicPath = `/uploads/${filename}`;
+        const fullPath = join(this.uploadsDir, filename);
+
+        // Schedule deletion after TTL
+        this._scheduleDeletion(filename, fullPath, this.uploadTtlMs);
+        return publicPath;
     }
 }

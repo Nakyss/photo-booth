@@ -36,4 +36,14 @@ export default class UserManager {
     getUserCount() {
         return this.connectedUsers.size;
     }
+
+    getUserCountByRoom(roomId) {
+        let count = 0;
+        this.connectedUsers.forEach((user) => {
+            if (user.rooms.includes(roomId)) {
+                count++;
+            }
+        })
+        return count;
+    }
 }

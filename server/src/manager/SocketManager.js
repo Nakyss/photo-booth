@@ -1,4 +1,3 @@
-// SocketManager.js
 import { WebSocketServer } from 'ws';
 
 export default class SocketManager {
@@ -60,7 +59,7 @@ export default class SocketManager {
         });
     }
 
-    // --- NOUVELLE FONCTION : Gestion du Ping/Pong Serveur ---
+    // Gestion du Ping/Pong Serveur ---
     startHeartbeat() {
         this.heartbeatInterval = setInterval(() => {
             this.wss.clients.forEach((ws) => {

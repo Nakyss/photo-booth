@@ -91,8 +91,8 @@ const drawCaptionOnCanvas = (text) => {
 
 
 /**
- * Generate a Blob from the canvas and upload it to the server
- * @return {Promise} Resolves with server response or rejects with error
+ * Generate a Blob from the canvas and upload it to the manager
+ * @return {Promise} Resolves with manager response or rejects with error
  */
 const uploadCapturedPhoto = () => {
     return new Promise((resolve, reject) => {
