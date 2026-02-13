@@ -30,7 +30,7 @@ export default class uploadService{
 
         const upload = multer({
             storage,
-            limits: { fileSize: 3 * 1024 * 1024 } // 3MB limit
+            limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
         });
 
          this.getUpload = () => {
@@ -95,7 +95,6 @@ export default class uploadService{
     registerImage = (filename) => {
         const publicPath = `/uploads/${filename}`;
         const fullPath = join(this.uploadsDir, filename);
-
         // Schedule deletion after TTL
         this._scheduleDeletion(filename, fullPath, this.uploadTtlMs);
         return publicPath;
