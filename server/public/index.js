@@ -1,11 +1,11 @@
-import { canvas, photoButton, cameraOption, importBtn, importInput, inverseBtn, timerBtn, darkModeToggle, captionInput, video, roomList, roomsInput, setRoomsBtn } from "./htmlElement.js";
-import { handleTimer, capturePhoto, setDeviceConstraints, getCameraSelection, startCamera } from "./camera.js";
-import { showVideo, updateUserCount } from "./documentAction.js";
-import { hideNotification, showNotification } from "./notification.js";
-import { originalImage, drawCaptionOnCanvas, uploadCapturedPhoto, ctx } from "./canva.js";
-import { onFileSelected, handlePasteImage, handleDragOver, handleDragLeave, handleDrop } from "./imported.js";
-import { getCaption } from "./inputs.js";
-import { removeRoom, addRoom, loadRooms, renderRoomsList } from "./room.js";
+import { canvas, photoButton, cameraOption, importBtn, importInput, inverseBtn, timerBtn, darkModeToggle, captionInput, video, roomsInput, setRoomsBtn } from "./scripts/htmlElement.js";
+import { handleTimer, capturePhoto, setDeviceConstraints, getCameraSelection, startCamera } from "./scripts/camera.js";
+import { showVideo, updateUserCount } from "./scripts/documentAction.js";
+import { hideNotification, showNotification } from "./scripts/notification.js";
+import { originalImage, drawCaptionOnCanvas, uploadCapturedPhoto, ctx } from "./scripts/canva.js";
+import { onFileSelected, handlePasteImage, handleDragOver, handleDragLeave, handleDrop } from "./scripts/imported.js";
+import { getCaption } from "./scripts/inputs.js";
+import {addRoom, loadRooms, renderRoomsList, updateRoomsCount} from "./scripts/room.js";
 
 
 // capture button
@@ -66,28 +66,29 @@ darkModeToggle.addEventListener("change", () => {
 
 
 
-document.getElementById('reload').addEventListener('click', () => {
-    updateUserCount();
+document.getElementById('reload').addEventListener('click', async () => {
+    await updateUserCount();
     document.querySelector('#reload i').classList.add('rotate');
+    await updateRoomsCount();
     setTimeout(() => {
         document.querySelector('#reload i').classList.remove('rotate');
     }, 1000);
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     loadRooms();
-    renderRoomsList();
-    updateUserCount();
-    getCameraSelection();
+    await renderRoomsList();
+    await updateUserCount();
+    await getCameraSelection();
 });
 
 inverseBtn.addEventListener('click', () => {
     video.classList.toggle('inversed');
 });
 
-cameraOption.addEventListener('change', (event) => {
+cameraOption.addEventListener('change', async (event) => {
     const updateConstraints = setDeviceConstraints(event.target.value);
-    startCamera(updateConstraints);
+    await startCamera(updateConstraints);
 });
 
 
@@ -106,14 +107,13 @@ document.addEventListener("drop", handleDrop);
 
 
 
-setRoomsBtn.addEventListener('click', () => {
+setRoomsBtn.addEventListener('click', async () => {
     const input = roomsInput.value.trim();
     if (input !== '') addRoom(input);
     else return;
 
-    addRoom(input);
     roomsInput.value = '';
-    renderRoomsList();
+    await renderRoomsList();
 });
 
 roomsInput.addEventListener('keyup', (event) => {

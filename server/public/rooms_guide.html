@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Guide des salles</title>
+    <link rel="shortcut icon" href="icons/icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="styles/install_guide.css">
+</head>
+<body>
+    <h1 class="title">Guide d'utilisations des salles</h1>
+
+    <div class="top-buttons">
+       <a href="/" class="top-btn">Retour à l'accueil</a>
+    </div>
+
+    <div class="card">
+
+       <div class="grid">
+          <main id="content">
+             <section id="windows" class="os-section">
+
+                <div class="section">
+                   <h3>Utilité</h3>
+                   <p>Les salles vous permettent d'envoyer vos photos à des groupes de personnes définis</p>
+                </div>
+
+                <div class="section">
+                   <h3>Client</h3>
+                   <p>Ouvrez le client en cliquant (ou double clique) sur l'icône de l'application en arrière-plan</p>
+                   <p>Dans l'application, entrez le nom d'une salle et valider, vous recevrez désormais toutes les images envoyées à cette salle.</p>
+                </div>
+
+                <div class="section">
+                   <h3>Site web</h3>
+                   <p>Sur le site, vous pouvez ajouter des salles, celle-ci représente les salles au quelle, vous envoyez les images.</p>
+                   <p>Vous avez la possibilité de les désactiver pour ne pas envoyer à ces salles sans les perdre.</p>
+                   <p>Si aucune salles n'est ajoutées ou activées, l'image sera envoyé à tout le monde.</p>
+                </div>
+             </section>
+          </main>
+       </div>
+    </div>
+
+    <script>
+       // Thème
+       if (localStorage.getItem("theme") === "dark") {
+          document.body.classList.add("dark");
+       }
+    </script>
+</body>
+</html>

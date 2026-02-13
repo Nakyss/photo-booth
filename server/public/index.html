@@ -89,12 +89,12 @@
 
         <div class="rooms-container">
             <div style="display: flex;">
-                <input type="text" id="roomsInput" placeholder="Salles" maxlength="10" class="textInput">
+                <input type="text" id="roomsInput" placeholder="Ajoutez une salle" maxlength="10" class="textInput">
                 <input type="button" id="setRoomsBtn" value="Ajouter" class="add-room-button">
             </div>
 
             <div style="color: var(--title-color);">
-                <p>Salles actuelles :</p>
+                <a class="room-explanation-link" href="/rooms_guide"><i class="fa-solid fa-circle-info"></i>&nbsp;Fonctionnement des salles</a>
                 <ul id="roomList">
 
                 </ul>
@@ -109,6 +109,6 @@
     <!-- Notifications -->
     <div class="toolbox"></div>
 
-    <script type="module" src="scripts/main.js"></script>
+    <script type="module" src="index.js"></script>
 </body>
 </html>

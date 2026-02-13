@@ -1,6 +1,6 @@
 import { canvas } from "./htmlElement.js";
 import { getCaption } from "./inputs.js";
-import { rooms } from "./room.js";
+import { getActiveRooms } from "./room.js";
 
 let originalImage = null;
 const ctx = canvas.getContext('2d');
@@ -91,8 +91,8 @@ const drawCaptionOnCanvas = (text) => {
 
 
 /**
- * Generate a Blob from the canvas and upload it to the server
- * @return {Promise} Resolves with server response or rejects with error
+ * Generate a Blob from the canvas and upload it to the manager
+ * @return {Promise} Resolves with manager response or rejects with error
  */
 const uploadCapturedPhoto = () => {
     return new Promise((resolve, reject) => {
@@ -103,7 +103,7 @@ const uploadCapturedPhoto = () => {
             const form = new FormData();
             form.append('image', blob, `photo-${Date.now()}.png`);
             form.append('message', getCaption());
-            form.append('rooms', JSON.stringify(rooms));
+            form.append('rooms', JSON.stringify(getActiveRooms()));
             
             try {
                 const res = await fetch('/upload', {

@@ -1,6 +1,6 @@
-import AppServer from './server/AppServer.js';
-import SocketManager from './server/SocketManager.js';
-import UserManager from './server/UserManager.js';
+import AppServer from './manager/AppServer.js';
+import SocketManager from './manager/SocketManager.js';
+import UserManager from './manager/UserManager.js';
 
 const userManager = new UserManager();
 const appServer = new AppServer(userManager);
