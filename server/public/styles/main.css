@@ -240,7 +240,7 @@ body.dark .top-btn:hover {
 ----------------------------------------------------- */
 .textInput {
     width: 100%;
-    padding: 8px 12px;
+    padding: 10px 14px;
     border: 1px solid var(--light-grey);
     border-radius: 5px;
     background-color: var(--bg-color);
@@ -310,9 +310,13 @@ body.dark .top-btn:hover {
 
 .rooms-container {
     position: absolute;
-    top: calc(100vh - 65vh);
-    left: 0;
-    width: 300px;
+    background-color: var(--light-grey);
+    top: calc(100vh - 70vh);
+    left: 10px;
+    width: 350px;
+    padding: 1rem;
+    border-radius: .5rem;
+    box-shadow: 0 1px 5px 5px rgba(0,0,0,0.3);
 }
 #roomsInput {
     width: 80%;
@@ -323,7 +327,8 @@ body.dark .top-btn:hover {
     color: var(--title-color);
     border: 1px solid var(--light-grey);
     border-radius: 5px;
-    margin-left: -5px;
+    flex-grow: 1;
+    cursor: pointer;
 }
 .add-room-button:hover {
     background-color: var(--notif-color);
@@ -331,7 +336,16 @@ body.dark .top-btn:hover {
 
 #roomList{
     list-style: none;
-    margin-left: 10px;
+    margin-top: .75rem;
+}
+#roomList li{
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid var(--bg-color);
+    padding: .3rem .5rem;
+    border-radius: 0.25rem;
+    margin: .3rem 0;
+    font-weight: bold;
 }
 
 #roomList button{
@@ -341,8 +355,17 @@ body.dark .top-btn:hover {
 }
 
 #roomList button:hover{
-    color: var(--light-grey);
+    color: var(--bg-color);
     cursor: pointer;
+}
+.room-explanation-link{
+    color: var(--title-color);
+    font-size: 0.8rem;
+}
+.room-buttons{
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 /* -----------------------------------------------------

@@ -1,6 +1,6 @@
 import { canvas } from "./htmlElement.js";
 import { getCaption } from "./inputs.js";
-import { rooms } from "./room.js";
+import { getActiveRooms } from "./room.js";
 
 let originalImage = null;
 const ctx = canvas.getContext('2d');
@@ -103,7 +103,7 @@ const uploadCapturedPhoto = () => {
             const form = new FormData();
             form.append('image', blob, `photo-${Date.now()}.png`);
             form.append('message', getCaption());
-            form.append('rooms', JSON.stringify(rooms));
+            form.append('rooms', JSON.stringify(getActiveRooms()));
             
             try {
                 const res = await fetch('/upload', {
