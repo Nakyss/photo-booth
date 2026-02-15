@@ -153,7 +153,6 @@ body.dark .top-btn:hover {
     color: var(--title-color);
     z-index: 101;
     padding: 3px 5px;
-    transition: width 0.2s linear;
 }
 
 .user-count:hover{
@@ -290,9 +289,8 @@ body.dark .top-btn:hover {
     height: 60px;
     border-radius: 50%;
     border: none;
-    border-bottom: 3px solid var(--secondary-color);
     background-color: #ffffffcc;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--secondary-color), transparent 70%);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -308,8 +306,8 @@ body.dark .top-btn:hover {
 }
 
 /* Validation buttons */
-#valid { background-color: green; }
-#delete { background-color: red; }
+#valid { background-color: green;}
+#delete { background-color: red;}
 
 /* -----------------------------------------------------
    NOTIFICATIONS
