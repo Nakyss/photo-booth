@@ -14,6 +14,8 @@ body {
     --title-color: #333;
     --light-grey: #ccc;
     --notif-color: #b8b8b8;
+    --primary-color: #2daa2e;
+    --secondary-color: #247a25;
 
     background: var(--bg-color);
     min-height: 100vh;
@@ -45,6 +47,10 @@ body.dragging {
     color: var(--title-color);
 }
 
+.header {
+    margin-top: 1rem;
+}
+
 /* -----------------------------------------------------
    TOP BUTTONS
 ----------------------------------------------------- */
@@ -65,6 +71,7 @@ body.dragging {
     font-weight: 500;
     text-decoration: none;
     transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    margin: 0 3px;
 }
 
 .top-btn:hover {
@@ -139,12 +146,29 @@ body.dark .top-btn:hover {
     position: absolute;
     top: 20px;
     right: 30px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     color: var(--title-color);
     z-index: 101;
+    padding: 3px 5px;
+    transition: width 0.2s linear;
+}
+
+.user-count:hover{
+    background: var(--light-grey);
+    border-radius: 1rem;
+}
+
+.user-count:hover #reload{
+    display: block;
+}
+
+#userCount{
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0 7px;
 }
 
 #reload {
@@ -155,6 +179,7 @@ body.dark .top-btn:hover {
     border-radius: 5px;
     color: var(--title-color);
     font-size: 1.2rem;
+    display: none;
 }
 
 #reload:hover { background-color: var(--light-grey); }
@@ -246,6 +271,10 @@ body.dark .top-btn:hover {
     background-color: var(--bg-color);
     color: var(--title-color);
 }
+.textInput:focus-visible{
+    outline: none;
+    border-color: var(--primary-color);
+}
 
 /* -----------------------------------------------------
    FLOATING BUTTONS
@@ -261,6 +290,7 @@ body.dark .top-btn:hover {
     height: 60px;
     border-radius: 50%;
     border: none;
+    border-bottom: 3px solid var(--secondary-color);
     background-color: #ffffffcc;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     cursor: pointer;
@@ -274,6 +304,7 @@ body.dark .top-btn:hover {
 .floating-button:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    background: var(--primary-color);
 }
 
 /* Validation buttons */
@@ -331,7 +362,7 @@ body.dark .top-btn:hover {
     cursor: pointer;
 }
 .add-room-button:hover {
-    background-color: var(--notif-color);
+    background-color: var(--secondary-color);
 }
 
 #roomList{

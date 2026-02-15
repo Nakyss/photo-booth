@@ -121,3 +121,12 @@ roomsInput.addEventListener('keyup', (event) => {
         setRoomsBtn.click();
     }
 });
+
+captionInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        const sendButton = document.getElementById('valid');
+        if (!sendButton.parentElement.classList.contains('hidden')) {
+            sendButton.click();
+        }
+    }
+});
