@@ -153,19 +153,21 @@ body.dark .top-btn:hover {
     color: var(--title-color);
     z-index: 101;
     padding: 3px 5px;
+    border-radius: 1rem;
+    transition: background 0.2s ease;
 }
 
 .user-count:hover{
     background: var(--light-grey);
-    border-radius: 1rem;
 }
 
 .user-count:hover #reload{
-    display: block;
+    max-width: 30px;
+    padding: 5px;
 }
 
 #userCount{
-    font-size: 3rem;
+    font-size: 2.9rem;
     font-weight: bold;
     margin: 0 7px;
 }
@@ -174,11 +176,13 @@ body.dark .top-btn:hover {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 0;
     border-radius: 5px;
     color: var(--title-color);
     font-size: 1.2rem;
-    display: none;
+    max-width: 0;
+    overflow: hidden;
+    transition: max-width 0.3s ease, padding 0.3s ease;
 }
 
 #reload:hover { background-color: var(--light-grey); }
