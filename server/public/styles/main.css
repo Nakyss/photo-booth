@@ -205,6 +205,13 @@ body.dark .top-btn:hover {
     display: none;
 }
 
+.legal {
+    color: var(--title-color);
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
 /* -----------------------------------------------------
    CENTRAL WRAPPER
 ----------------------------------------------------- */
