@@ -27,6 +27,7 @@ class RoomWebClient {
     }
 
     renderRoomsList = () => {
+        const roomList = document.getElementById('roomList');
         roomList.innerHTML = '';
         this.rooms.forEach(room => {
             const el = document.createElement('li');

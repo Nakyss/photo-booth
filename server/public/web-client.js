@@ -2,6 +2,7 @@ import PhotoBoothWebSocket from './scripts/webSockerClient.js';
 import RoomWebClient from './scripts/roomWebClient.js';
 
 const imageContainer = document.getElementById('imageContainer');
+const settingsWindow = document.getElementById('settings-window');
 
 const displayImage = (url) => {
     const img = document.createElement('img');
@@ -49,7 +50,6 @@ const setRoomsBtn = document.getElementById('setRoomsBtn');
 const roomsInput = document.getElementById('roomsInput');
 
 document.getElementById('settings').addEventListener('click', () => {
-    const settingsWindow = document.getElementById('settings-window');
     settingsWindow.style.display = settingsWindow.style.display === 'block' ? 'none' : 'block';
     if (settingsWindow.style.display === 'block') {
         roomWebClient.renderRoomsList();
