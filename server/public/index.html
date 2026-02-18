@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo-booth</title>
-
     <link rel="stylesheet" href="styles/main.css">
     <link rel="shortcut icon" href="icons/icon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
@@ -13,16 +12,13 @@
 </head>
 
 <body>
-    <!-- Title -->
     <h1 class="title">Photo-booth</h1>
  
-    <!-- Download + Client -->
     <div class="header">
         <a href="/installation_guide" class="top-btn">Télécharger le client</a>
         <a href="/client" class="top-btn">Client en ligne</a>
     </div>
 
-    <!-- Top bar -->
     <div class="top-bar">
         <div class="infos">
             <div class="checkbox-container">
@@ -35,7 +31,6 @@
             </div>
         </div>
 
-        <!-- User count (absolute top right) -->
         <div class="user-count">
             <span id="userCount" style="color: red;">0</span>
             <p>Clients<br>connectés</p>
@@ -43,25 +38,19 @@
         </div>
     </div>
 
-    <!-- CENTRAL WRAPPER -->
     <div class="center-wrapper">
 
-        <!-- Camera selector -->
         <select id="cameraOption">
             <option value="" disabled selected>Choisir une caméra</option>
         </select>
 
-        <!-- Video preview -->
         <div class="video-container">
-
             <video id="cameraStream" autoplay playsinline></video>
             <canvas id="photoCanvas" class="hidden"></canvas>
         </div>
 
-        <!-- Caption input -->
         <input type="text" id="caption" class="textInput" placeholder="Entrez une légende" maxlength="100">
 
-        <!-- Floating action buttons -->
         <div class="buttons-box" id="capture">
             <button id="timerBtn" class="floating-button" aria-label="Minuterie" title="Retardateur (3sec)">
                 <img src="/icons/timer-icon.svg" alt="minuteur">
@@ -78,7 +67,6 @@
             <input type="file" id="importInput" accept="image/*" class="hidden">
         </div>
 
-        <!-- Validation buttons -->
         <div class="buttons-box hidden" id="validation-buttons">
             <button id="valid" class="floating-button" title="Envoyer l'image">
                 <img src="icons/check-icon.svg" alt="Valider">
@@ -107,7 +95,6 @@
         <a href="/client" class="top-btn">Client en ligne</a>
     </div>
 
-    <!-- Notifications -->
     <div class="toolbox"></div>
 
     <script type="module" src="index.js"></script>
