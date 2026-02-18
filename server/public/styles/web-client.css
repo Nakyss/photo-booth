@@ -1,0 +1,56 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    --bg-color: #ffffff;
+    --title-color: #333;
+    --light-grey: #ccc;
+    background: var(--bg-color);
+}
+body.dark {
+    --bg-color: #071023;
+    --title-color: #ddd;
+    --light-grey: #555;
+}
+#settings {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    font-size: 1.3rem;
+    transition: transform 0.2s ease;
+    transform: translateX(-50px);
+    color: var(--title-color);
+}
+#settings:hover {
+    color: #247a25;
+}
+#settings-window{
+    position: absolute;
+    top: 15px;
+    left: 50px;
+    background-color: var(--light-grey);
+    padding: 10px;
+    z-index: 1;
+    border-radius: .5rem;
+}
+.room-explanation-link{
+    color: var(--title-color);
+}
+#roomList {
+    margin: 5px;
+    list-style: none;
+    padding-left: 15px;
+}
+#detect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+}
+#detect:hover #settings {
+    transform: translateX(0);
+}
