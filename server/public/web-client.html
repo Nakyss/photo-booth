@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="shortcut icon" href="icons/icon.png" type="image/x-icon">
     <title>Photo-booth Web</title>
 </head>
@@ -20,7 +21,10 @@
             img.style.objectFit = "contain";
             img.style.position = "absolute";
             img.src = url;
+            img.style.opacity = "0";
+            img.style.transition = "opacity 0.2s ease";
             img.onload = () => {
+                img.style.opacity = "1";
                 setTimeout(() => {
                     img.remove();
                 }, 2500);
@@ -50,6 +54,7 @@
 
             onOpen(wsUrl) {
                 console.log('WebSocket connecté:', wsUrl);
+                this.updateRooms([]);
             }
 
             onMessage(evt) {
@@ -85,6 +90,12 @@
             disconnect() {
                 this.shouldReconnect = false;
                 this.ws?.close();
+            }
+            
+            updateRooms(rooms) {
+                if (this.ws?.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify({ event: 'room:changed', data: { rooms: JSON.stringify(rooms) } }));
+                }
             }
         }
 
