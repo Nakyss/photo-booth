@@ -4,7 +4,7 @@ export default class SocketManager {
     constructor(server, userManager) {
         this.wss = new WebSocketServer({ server });
         this.userManager = userManager;
-        
+
         // Intervalle pour vérifier les clients morts (toutes les 30s)
         this.heartbeatInterval = null;
     }
@@ -27,23 +27,23 @@ export default class SocketManager {
             });
 
             // Ajout au User Manager
-            const newUser = this.userManager.addUser(id);
+            this.userManager.addUser(id);
 
             // Prévenir les autres
-            this.broadcastExcept(ws, 'user_connected', newUser);
+            //this.broadcastExcept(ws, 'user_connected', newUser);
 
             ws.on('message', (msg) => {
                 try {
                     // Si on reçoit un message, le client est forcément vivant
-                    ws.isAlive = true; 
-                    
+                    ws.isAlive = true;
+
                     const { event } = JSON.parse(msg);
                     if (event === 'disconnect') {
                         this.handleDisconnect(ws);
                     }
                     if (event === 'room:changed') {
                         const data = JSON.parse(msg).data;
-                        console.log("Room Changed : ",this.userManager.setUserRooms(ws._id, data.rooms));
+                        console.log("Room Changed : ", this.userManager.setUserRooms(ws._id, data.rooms));
                     }
                 } catch (e) {
                     console.warn('Invalid message:', msg.toString(), e);
@@ -69,21 +69,20 @@ export default class SocketManager {
                     return ws.terminate(); // On coupe brutalement
                 }
 
-                // On marque le client comme "suspect" (false) et on lui envoie un ping
                 ws.isAlive = false;
-                ws.ping(); // Envoie un ping standard WebSocket
+                ws.ping();
             });
         }, 30000); // Vérification toutes les 30 secondes
     }
 
     handleDisconnect(ws) {
         if (!ws._id) return;
-        
+
         // Vérification pour éviter les doubles suppressions
-        if(this.userManager.getUser(ws._id)) {
+        if (this.userManager.getUser(ws._id)) {
             console.log('User disconnected:', ws._id);
             this.userManager.removeUser(ws._id);
-            this.broadcastExcept(ws, 'user_disconnected', { id: ws._id });
+            //this.broadcastExcept(ws, 'user_disconnected', { id: ws._id });
         }
     }
 
@@ -100,7 +99,7 @@ export default class SocketManager {
             this.broadcastAll(payload);
             console.log('New picture sent to all');
         }
-        
+
     }
 
     broadcastExcept(exclude, event, data) {
