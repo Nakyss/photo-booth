@@ -94,7 +94,7 @@ const drawCaptionOnCanvas = (text) => {
  * Generate a Blob from the canvas and upload it to the manager
  * @return {Promise} Resolves with manager response or rejects with error
  */
-const uploadCapturedPhoto = () => {
+const uploadCapturedPhoto = (onProgress) => {
     return new Promise((resolve, reject) => {
         // Convertir le canvas haute résolution en blob
         canvas.toBlob(async (blob) => {
@@ -106,16 +106,36 @@ const uploadCapturedPhoto = () => {
             form.append('rooms', JSON.stringify(getActiveRooms()));
             
             try {
-                const res = await fetch('/upload', {
-                    method: 'POST',
-                    body: form
+                const xhr = new XMLHttpRequest();
+                
+                // Gérer la progression de l'upload
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable && onProgress) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        onProgress(percentComplete);
+                    }
                 });
-                if (!res.ok) {
-                    const err = await res.text();
-                    return reject(new Error(err || 'Erreur lors de l\'upload'));
-                }
-                const json = await res.json();
-                resolve(json);
+                
+                xhr.addEventListener('load', () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const json = JSON.parse(xhr.responseText);
+                            resolve(json);
+                        } catch (e) {
+                            reject(new Error('Erreur de parsing de la réponse'));
+                        }
+                    } else {
+                        reject(new Error(xhr.responseText || 'Erreur lors de l\'upload'));
+                    }
+                });
+                
+                xhr.addEventListener('error', () => {
+                    reject(new Error('Erreur réseau'));
+                });
+                
+                xhr.open('POST', '/upload');
+                xhr.send(form);
+                
             } catch (e) {
                 reject(e);
             }
