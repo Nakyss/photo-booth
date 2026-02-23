@@ -32,7 +32,7 @@ const updateUserCount = async () => {
         const el = document.getElementById('userCount')
         el.textContent = userCount;
         if (userCount > 0) {
-            el.style.color = 'green';
+            el.style.color = 'var(--primary-color)';
         } else {
             el.style.color = 'red';
         }
