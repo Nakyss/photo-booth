@@ -1,7 +1,7 @@
 import { canvas, photoButton, cameraOption, importBtn, importInput, inverseBtn, timerBtn, darkModeToggle, captionInput, video, roomsInput, setRoomsBtn } from "./scripts/htmlElement.js";
 import { handleTimer, capturePhoto, setDeviceConstraints, getCameraSelection, startCamera } from "./scripts/camera.js";
 import { showVideo, updateUserCount } from "./scripts/documentAction.js";
-import { hideNotification, showNotification } from "./scripts/notification.js";
+import { hideNotification, showNotification, updateProgress } from "./scripts/notification.js";
 import { originalImage, drawCaptionOnCanvas, uploadCapturedPhoto, ctx } from "./scripts/canva.js";
 import { onFileSelected, handlePasteImage, handleDragOver, handleDragLeave, handleDrop } from "./scripts/imported.js";
 import { getCaption } from "./scripts/inputs.js";
@@ -24,7 +24,9 @@ document.getElementById('valid').addEventListener('click', async () => {
     const notification = showNotification();
     showVideo();
     try {
-        const result = await uploadCapturedPhoto();
+        const result = await uploadCapturedPhoto((progress) => {
+            updateProgress(notification, progress);
+        });
         console.log('Upload réussi:', result);
         hideNotification(notification);
 

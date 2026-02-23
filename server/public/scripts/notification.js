@@ -10,18 +10,35 @@ const showNotification = () => {
 
     notification.innerHTML = `
         <img src="${imageDataURL}" alt="Envoi en cours">
-        <p>Envoie en cours</p>
+        <div class="notification-content">
+            <p>Envoi en cours</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
     `;
     toolbox.appendChild(notification);
     
     return notification;
 }
 
+const updateProgress = (notification, percentage) => {
+    const progressFill = notification.querySelector('.progress-fill');
+    if (progressFill) {
+        progressFill.style.width = `${percentage}%`;
+    }
+}
+
 const hideNotification = (notification) => {
     notification.querySelector('p').textContent = 'Envoi terminé';
+    const progressFill = notification.querySelector('.progress-fill');
+    if (progressFill) {
+        progressFill.style.width = '100%';
+        progressFill.style.backgroundColor = '#0d41cf';
+    }
     setTimeout(() => {
         notification.remove();
     }, 2000);
 }
 
-export { showNotification, hideNotification };
+export { showNotification, hideNotification, updateProgress };
