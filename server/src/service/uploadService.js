@@ -33,7 +33,7 @@ export default class uploadService{
             limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
         });
 
-         this.getUpload = () => {
+        this.getUpload = () => {
             return upload;
         }
     }
