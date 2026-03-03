@@ -34,7 +34,7 @@ body {
 
 body.dark {
     --bg-color: #2D1B4E;
-    --title-color: #FFB4D6;
+    --title-color: #FF6FB0;
     --light-grey: #4A3A6E;
     --notif-color: #3D2E5E;
     --accent-color: #2CE3DD;
@@ -522,12 +522,13 @@ body.dark .top-btn:hover {
 #roomList li:hover {
     transform: translateX(5px);
     background: var(--accent-color);
+    color: var(--bg-color);
 }
 
 #roomList button{
     border: none;
     background: none;
-    color: var(--title-color);
+    color: inherit;
     cursor: pointer;
     font-size: 1.1rem;
     transition: all 0.3s ease;
