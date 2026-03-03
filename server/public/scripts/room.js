@@ -89,7 +89,7 @@ const updateRoomsCount = async () => {
             const el = room.querySelector('.countEl');
             el.textContent = ` (${userCount})`;
             if (userCount > 0) {
-                el.style.color = 'var(--primary-color)';
+                el.style.color = '#00ba00';
             } else {
                 el.style.color = 'red';
             }
