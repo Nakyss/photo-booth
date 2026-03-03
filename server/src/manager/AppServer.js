@@ -4,6 +4,7 @@ import http from 'http';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import uploadService from "../service/uploadService.js";
+import { rateLimit } from 'express-rate-limit'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,9 +19,23 @@ export default class AppServer {
         this.uploadService = new uploadService();
 
         // Middleware
-        this.app.use(cors());
         this.app.use(express.json());
 
+        // CORS global (sauf pour /upload qui a son propre CORS)
+        this.app.use((req, res, next) => {
+            if (req.path === '/upload') {
+                return next();
+            }
+            cors()(req, res, next);
+        });
+
+        const limiter = rateLimit({
+            windowMs: 60 * 1000,
+            limit: 20,
+            standardHeaders: 'draft-8',
+            legacyHeaders: false, 
+            ipv6Subnet: 56,
+        });
 
         // Routes
         this.app.get('/', (req, res) => {
@@ -41,20 +56,30 @@ export default class AppServer {
             res.sendFile(join(__dirname, '../../public/web-client.html'));
         });
 
-        // POST /upload : accepte un champ `image` (multipart/form-data)
-        this.app.post('/upload', this.uploadService.getUpload().single('image'), (req, res) => {
-            if (!req.file) {
-                return res.status(400).json({ error: 'No file uploaded' });
+
+        this.app.post('/upload', 
+            cors({
+                origin: ['https://photo.nakyss.fr', 'https://jog.nylphen.fr'],
+                methods: ['POST'],
+                credentials: true
+            }),
+            limiter,
+            // Upload du fichier
+            this.uploadService.getUpload().single('image'), 
+            (req, res) => {
+                if (!req.file) {
+                    return res.status(400).json({ error: 'No file uploaded' });
+                }
+
+                const publicPath = this.uploadService.registerImage(req.file.filename);
+
+                if (this.socketManager) {
+                    this.socketManager.broadcastPhoto(publicPath, req.body.message || '', JSON.parse(req.body.rooms) || []);
+                }
+
+                return res.json({ path: publicPath });
             }
-
-            const publicPath = this.uploadService.registerImage(req.file.filename);
-
-            if (this.socketManager) {
-                this.socketManager.broadcastPhoto(publicPath, req.body.message || '', JSON.parse(req.body.rooms) || []);
-            }
-
-            return res.json({ path: publicPath });
-        });
+        );
 
         this.app.get('/users', (req, res) => {
             const users = this.userManager.getUserCount();

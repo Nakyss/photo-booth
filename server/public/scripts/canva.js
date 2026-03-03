@@ -1,6 +1,5 @@
 import { canvas } from "./htmlElement.js";
-import { getCaption } from "./inputs.js";
-import { getActiveRooms } from "./room.js";
+import { getForm, sendImage } from "./network.js";
 
 let originalImage = null;
 const ctx = canvas.getContext('2d');
@@ -100,45 +99,11 @@ const uploadCapturedPhoto = (onProgress) => {
         canvas.toBlob(async (blob) => {
             if (!blob) return reject(new Error('Impossible de créer le blob'));
 
-            const form = new FormData();
-            form.append('image', blob, `photo-${Date.now()}.png`);
-            form.append('message', getCaption());
-            form.append('rooms', JSON.stringify(getActiveRooms()));
+            const form = getForm(blob);
             
-            try {
-                const xhr = new XMLHttpRequest();
-                
-                // Gérer la progression de l'upload
-                xhr.upload.addEventListener('progress', (e) => {
-                    if (e.lengthComputable && onProgress) {
-                        const percentComplete = (e.loaded / e.total) * 100;
-                        onProgress(percentComplete);
-                    }
-                });
-                
-                xhr.addEventListener('load', () => {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const json = JSON.parse(xhr.responseText);
-                            resolve(json);
-                        } catch (e) {
-                            reject(new Error('Erreur de parsing de la réponse'));
-                        }
-                    } else {
-                        reject(new Error(xhr.responseText || 'Erreur lors de l\'upload'));
-                    }
-                });
-                
-                xhr.addEventListener('error', () => {
-                    reject(new Error('Erreur réseau'));
-                });
-                
-                xhr.open('POST', '/upload');
-                xhr.send(form);
-                
-            } catch (e) {
-                reject(e);
-            }
+            sendImage(form, onProgress)
+                .then(resolve)
+                .catch(reject);
         }, 'image/png');
     });
 }
