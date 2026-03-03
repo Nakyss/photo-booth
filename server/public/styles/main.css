@@ -246,6 +246,13 @@ body.dark .top-btn:hover {
     display: none;
 }
 
+.legal {
+    color: var(--title-color);
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
 /* -----------------------------------------------------
    CENTRAL WRAPPER
 ----------------------------------------------------- */
@@ -255,7 +262,7 @@ body.dark .top-btn:hover {
     align-items: center;
     width: 100%;
     max-width: 600px;
-    margin-top: 65px;
+    margin-top: 60px;
     gap: 20px;
 }
 

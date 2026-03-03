@@ -48,6 +48,9 @@ export default class AppServer {
         this.app.get('/rooms_guide', (req, res) => {
             res.sendFile(join(__dirname, '../../public/rooms_guide.html'));
         });
+        this.app.get('/legal', (req, res) => {
+            res.sendFile(join(__dirname, '../../public/legal.html'));
+        });
         
         this.app.get('/client', (req, res) => {
             res.sendFile(join(__dirname, '../../public/web-client.html'));
