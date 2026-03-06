@@ -1,13 +1,13 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-    --bg-color: #ffffff;
+    --background: #ffffff;
     --title-color: #333;
     --light-grey: #ccc;
-    background: var(--bg-color);
+    background: var(--background);
 }
 body.dark {
-    --bg-color: #071023;
+    --background: #071023;
     --title-color: #ddd;
     --light-grey: #555;
 }
