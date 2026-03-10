@@ -129,7 +129,6 @@ body.dragging {
    TOP BAR (DARK MODE TOGGLE)
 ----------------------------------------------------- */
 .infos {
-    width: 100%;
     position: absolute;
     top: 0;
     left: 0;
