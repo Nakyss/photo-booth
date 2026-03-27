@@ -21,6 +21,8 @@ export default class AppServer {
         // Middleware
         this.app.use(express.json());
 
+        this.app.set('trust proxy', 1 /* number of proxies between user and server */)
+
         // CORS global (sauf pour /upload qui a son propre CORS)
         this.app.use((req, res, next) => {
             if (req.path === '/upload') {
