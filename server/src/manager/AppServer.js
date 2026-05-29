@@ -61,7 +61,7 @@ export default class AppServer {
 
         this.app.post('/upload', 
             cors({
-                origin: ['https://photo.nakyss.fr', 'https://jog.nylphen.fr'],
+                origin: ['https://photo.nakyss.fr', 'https://joggg.nylphen.fr/'],
                 methods: ['POST'],
                 credentials: true
             }),
