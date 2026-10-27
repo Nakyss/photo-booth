@@ -109,7 +109,6 @@ export default class AppServer {
     start(port = 3000) {
         this.server.listen(port, () => {
             console.log(`Server running on http://127.0.0.1:${port}`);
-            console.log('Mise à jour effectuer');
         });
     }
 }
